@@ -22,6 +22,16 @@ pnpm docs:preview
 
 生产文件位于 `docs/.vitepress/dist`。仓库默认使用 `/art-supabase-doc/` 作为公共路径；部署到域名根目录时设置 `DOCS_BASE=/` 后重新构建。
 
+## GitHub Pages 发布
+
+推送 `master` 分支后，`.github/workflows/deploy.yml` 会构建 VitePress 并将
+`docs/.vitepress/dist` 发布到 GitHub Pages。GitHub 仓库的 **Settings → Pages → Source**
+必须选择 **GitHub Actions**，不能选择从 `master` 分支直接发布；后者只会用 Jekyll
+渲染仓库源码，无法得到完整的 VitePress 文档站。
+
+如果 GitHub 仓库来自 Gitee 镜像，必须确认 `.github/workflows/deploy.yml` 已同步到
+GitHub；仅同步文档源码而漏掉工作流时，GitHub Pages 不会执行 VitePress 构建。
+
 ## 内容结构
 
 - `docs/guide`：产品认识、快速开始、环境配置和首次使用。
