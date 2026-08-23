@@ -1,39 +1,43 @@
-# art-supabase-doc
+# Art Supabase Pro 文档站
 
-#### 介绍
-{**以下是 Gitee 平台说明，您可以替换此简介**
-Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN）。专为开发者提供稳定、高效、安全的云端软件开发协作平台
-无论是个人、团队、或是企业，都能够用 Gitee 实现代码托管、项目管理、协作开发。企业项目请看 [https://gitee.com/enterprises](https://gitee.com/enterprises)}
+这是 [Art Supabase Pro](https://gitee.com/wangyanghub/art-supabase-pro) 的官方文档仓库，基于 VitePress 构建，内容覆盖产品介绍、安装部署、业务操作、二次开发、Supabase 安全和运维排障。
 
-#### 软件架构
-软件架构说明
+## 本地开发
 
+环境要求：Node.js 20 或更高版本、pnpm 9 或更高版本。
 
-#### 安装教程
+```powershell
+pnpm install
+pnpm docs:dev
+```
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+开发站点默认运行在 `http://localhost:5173/art-supabase-doc/`。
 
-#### 使用说明
+## 构建与预览
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+```powershell
+pnpm docs:build
+pnpm docs:preview
+```
 
-#### 参与贡献
+生产文件位于 `docs/.vitepress/dist`。仓库默认使用 `/art-supabase-doc/` 作为公共路径；部署到域名根目录时设置 `DOCS_BASE=/` 后重新构建。
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+## 内容结构
 
+- `docs/guide`：产品认识、快速开始、环境配置和首次使用。
+- `docs/manual`：平台、权限、数据中心、工作流和 AI 操作手册。
+- `docs/modules`：TMS、VMS、FMS、HR、SMIS 业务说明。
+- `docs/development`：架构、前端约定、Supabase、模块协作和质量门禁。
+- `docs/operations`：部署、安全、升级维护和故障排查。
+- `docs/reference`：命令、环境变量和目录速查。
 
-#### 特技
+## 维护文档
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+1. 在对应目录编辑 Markdown；文件名保持小写英文和连字符。
+2. 新页面同步加入 `docs/.vitepress/config.mts` 的侧栏。
+3. 命令、路径、权限或 Supabase 行为必须以当前代码和官方文档为准。
+4. 提交前运行 `pnpm check`，确认格式和生产构建均通过。
+
+## 许可证
+
+文档与主项目保持一致，采用木兰宽松许可证第 2 版（MulanPSL-2.0）。

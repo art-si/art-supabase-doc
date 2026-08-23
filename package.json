@@ -1,0 +1,27 @@
+{
+  "name": "art-supabase-doc",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Art Supabase Pro 官方文档站",
+  "packageManager": "pnpm@11.9.0",
+  "engines": {
+    "node": ">=20.19.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "dev": "vitepress dev docs --host 0.0.0.0",
+    "build": "vitepress build docs",
+    "preview": "vitepress preview docs --host 0.0.0.0",
+    "docs:dev": "vitepress dev docs --host 0.0.0.0",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs --host 0.0.0.0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "pnpm format:check && pnpm docs:build"
+  },
+  "devDependencies": {
+    "prettier": "3.8.4",
+    "vitepress": "1.6.4"
+  }
+}
