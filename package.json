@@ -6,8 +6,8 @@
   "description": "Art Supabase Pro 官方文档站",
   "packageManager": "pnpm@11.9.0",
   "engines": {
-    "node": ">=20.19.0",
-    "pnpm": ">=9.0.0"
+    "node": ">=22.0.0",
+    "pnpm": ">=11.9.0"
   },
   "scripts": {
     "dev": "vitepress dev docs --host 0.0.0.0",
