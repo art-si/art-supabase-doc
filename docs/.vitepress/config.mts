@@ -11,7 +11,7 @@ export default defineConfig({
   cleanUrls: true,
   lastUpdated: true,
   ignoreDeadLinks: false,
-  sitemap: { hostname: 'https://wangyanghub.gitee.io/art-supabase-doc/' },
+  sitemap: { hostname: 'https://869123771.github.io/art-supabase-doc/' },
   head: [
     ['link', { rel: 'icon', href: `${publicBase}logo.webp` }],
     ['meta', { name: 'theme-color', content: '#5b5bd6' }],

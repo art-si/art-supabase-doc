@@ -55,7 +55,9 @@ $env:DOCS_BASE = "/"
 pnpm docs:build
 ```
 
-将构建目录发布到 Gitee Pages、GitHub Pages、Cloudflare Pages、Netlify、Vercel 或 Nginx。平台构建设置通常为：
+Gitee 社区版 Pages 已下线，因此文档仓保留在 Gitee 作为代码源，并推荐由已同步的 GitHub 仓库通过 Actions 发布到 GitHub Pages；也可以选择 Cloudflare Pages、Netlify、Vercel 或 Nginx。仓库已经提供 `.github/workflows/deploy.yml`，在 GitHub 仓库的 **Settings → Pages → Source** 选择 **GitHub Actions** 后，每次推送 `master` 会自动发布。
+
+通用托管平台构建设置：
 
 | 设置     | 值                               |
 | -------- | -------------------------------- |

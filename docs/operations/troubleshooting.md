@@ -78,4 +78,4 @@ curl.exe -so NUL -w "%{http_code}" https://mcp.supabase.com/mcp
 
 ### 子路径下截图或链接 404
 
-确认构建时 `DOCS_BASE` 与实际部署路径一致；Gitee/GitHub Pages 仓库站点通常使用 `/art-supabase-doc/`，自定义域名根目录使用 `/`。修改后重新构建，不手改产物路径。
+确认构建时 `DOCS_BASE` 与实际部署路径一致；GitHub Pages 仓库站点使用 `/art-supabase-doc/`，自定义域名根目录使用 `/`。修改后重新构建，不手改产物路径。Gitee 社区版 Pages 已下线，不能把 `gitee.io` 404 当作文档构建失败。
