@@ -1,6 +1,6 @@
 # 业务模块协作
 
-每个业务仓可以独立开发和构建，主平台通过 Git submodule 固定它的提交。公共运行时只在主仓维护，子仓不能复制认证、菜单、权限、布局、Store、核心组件或 Supabase 客户端。
+每个 Web 业务仓可以独立开发和构建，主平台通过 Git submodule 固定它的提交。公共运行时只在主仓维护，子仓不能复制认证、菜单、权限、布局、Store、核心组件或 Supabase 客户端。司机端是独立的 uni-app 应用，不作为主仓子模块装载，通过 TMS 服务端契约参与同一条运单履约链路。
 
 ## 主仓命令
 
@@ -59,6 +59,15 @@ git submodule update --init --recursive
 - RPC 校验用户、租户、业务权限和记录状态。
 - 前端业务仓不直接引用另一个业务仓源码。
 
+## 司机端协作
+
+`supabase-mobile-tms-driver` 独立维护 H5 与微信小程序源码。它不复用 Web 主仓的组件、Store 或路由，而是复用同一套身份、租户和业务数据边界：
+
+- 司机只能读取服务端判定为本人可见的任务、车辆与必要字段。
+- 接单、取消、装卸货、发车、签收、完成和费用上报由 TMS/RPC/Edge Function 契约校验。
+- Web 管理端与司机端共享业务记录，不分别维护两套状态机。
+- 移动端发布不需要更新主仓 gitlink；接口或数据库契约变化必须同时验证两端。
+
 ## 独立运行
 
-FMS/HR/SMIS/VMS/TMS 分别使用 3012–3016 开发端口，生产默认输出到各仓 `docs/` 并使用 `/art-supabase-<code>/` 公共路径。当前生产推荐仍由平台宿主统一聚合；跨域独立部署需要服务端一次性授权码 SSO，不能在 URL 中传 access token 或 refresh token。
+FMS/HR/SMIS/VMS/TMS 分别使用 3012–3016 开发端口，生产默认输出到各仓 `docs/` 并使用 `/art-supabase-<code>/` 公共路径。司机端使用 `pnpm dev:h5` 或 `pnpm dev:mp-weixin` 独立运行。当前 Web 业务生产推荐仍由平台宿主统一聚合；跨域独立部署需要服务端一次性授权码 SSO，不能在 URL 中传 access token 或 refresh token。

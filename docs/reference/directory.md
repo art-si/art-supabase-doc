@@ -39,6 +39,21 @@ art-supabase-pro/
 └─ .mcp.json               # 项目 Supabase MCP 配置
 ```
 
+司机端是与主仓并列的独立仓库，不放在 `modules/` 下：
+
+```text
+supabase-mobile-tms-driver/
+├─ src/
+│  ├─ pages/               # 登录、工作台、运单、车辆与我的
+│  ├─ components/business/ # 移动端业务组件
+│  ├─ api/                 # Supabase、运单、费用、车辆与档案契约
+│  ├─ stores/              # 身份、司机档案、字典与运单状态
+│  └─ static/              # 移动端静态资源
+├─ supabase/               # 司机端相关函数、迁移或配置
+├─ docs/                   # H5 生产构建产物
+└─ package.json
+```
+
 ## 业务子仓通用结构
 
 ```text
@@ -80,4 +95,5 @@ art-supabase-doc/
 - 所有应用共享的认证、布局、权限、组件或工具：放主仓。
 - 页面只负责 UI，传输逻辑放 API/Provider。
 - 跨域读取契约放数据库/RPC 边界，消费者只依赖稳定 DTO。
+- 司机端保持移动技术栈自治，通过稳定服务契约与 TMS 协作，不复制 Web 页面代码。
 - 构建生成物由脚本生成，不手工编辑。
