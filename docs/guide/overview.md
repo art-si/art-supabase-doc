@@ -5,7 +5,7 @@ Art Supabase Pro 是一个以 Vue 3、TypeScript、Element Plus 和 Supabase 为
 ## 适用场景
 
 - 需要统一认证、组织、角色和菜单的多业务企业平台。
-- 需要 TMS 运输、VMS 车辆、FMS 财务、HR 人力、SMIS 安全生产或司机移动协同能力的项目。
+- 需要 MDM 主数据、MES 制造、WMS 仓储、TMS 运输、VMS 车辆、FMS 财务、HR 人力、SMIS 安全生产或司机移动协同能力的项目。
 - 希望用 Supabase 快速获得 PostgreSQL、Auth、Storage、Realtime、RPC 和 Edge Functions 的团队。
 - 希望 AI 能被普通员工安全使用，同时保留审计、权限和受控写入边界的组织。
 
@@ -14,7 +14,7 @@ Art Supabase Pro 是一个以 Vue 3、TypeScript、Element Plus 和 Supabase 为
 | 层次          | 负责内容                                                                               |
 | ------------- | -------------------------------------------------------------------------------------- |
 | Platform 平台 | 登录、租户、组织、用户、角色、菜单、按钮权限、数据字典、附件、系统参数、审批和 AI 配置 |
-| 业务应用      | TMS、VMS、FMS、HR、SMIS，各自拥有页面、业务 API、类型、规则和部分 Edge Functions       |
+| 业务应用      | MDM、MES、WMS、TMS、VMS、FMS、HR、SMIS，各自拥有页面、业务 API、类型和领域规则         |
 | 移动执行      | 司机 H5 / 微信小程序，完成接单、打卡、装卸货、签收、收车、凭证和费用上报               |
 | Supabase 后端 | Auth、PostgreSQL、RLS、Storage、Realtime、RPC、数据库函数与 Edge Functions             |
 | 工程质量      | TypeScript、ESLint、Prettier、Stylelint、Node Test、Playwright、UI 审计和构建预算      |
@@ -37,7 +37,7 @@ Art Supabase Pro 是一个以 Vue 3、TypeScript、Element Plus 和 Supabase 为
 
 1. 部署人员阅读[快速开始](/guide/quick-start)与[生产部署](/operations/deployment)。
 2. 管理员阅读[首次登录](/guide/first-login)和[组织、用户与权限](/manual/permissions)。
-3. 业务人员按需进入[业务模块](/modules/tms)，司机端使用与部署见[司机端](/modules/driver)。
+3. 业务人员按需进入[业务模块](/modules/mdm)，司机端使用与部署见[司机端](/modules/driver)。
 4. 开发人员从[总体架构](/development/architecture)开始。
 
 ::: tip 文档边界

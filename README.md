@@ -1,7 +1,7 @@
 <div align="center">
   <h1>Art Supabase Pro Documentation</h1>
   <p><strong>Art Supabase Pro 官方使用、开发、部署与运维文档</strong></p>
-  <p>一套文档说明平台底座、五大业务应用、司机端、Supabase 安全与工程协作。</p>
+  <p>一套文档说明平台底座、八大 Web 业务应用、司机端、Supabase 安全与工程协作。</p>
 
   <p>
     <a href="https://gitee.com/wangyanghub/art-supabase-doc">Gitee</a>
@@ -22,7 +22,7 @@
 | -------- | ----------------------------------------------------- |
 | 快速开始 | 产品认识、环境配置、安装启动与首次登录                |
 | 平台手册 | 工作台、组织用户、权限、系统管理、数据中心、审批与 AI |
-| 业务应用 | TMS、VMS、FMS、HR、SMIS 与 TMS 司机端                 |
+| 业务应用 | MDM、MES、WMS、TMS、VMS、FMS、HR、SMIS 与 TMS 司机端  |
 | 二次开发 | 总体架构、前端约定、Supabase、模块协作与质量门禁      |
 | 部署运维 | 生产部署、安全基线、升级维护与故障排查                |
 | 参考手册 | 命令、环境变量、目录结构与 Gitee/GitHub 仓库简介文案  |
@@ -56,7 +56,7 @@ pnpm docs:preview
 
 - `docs/guide`：产品认识、快速开始、环境配置和首次使用。
 - `docs/manual`：平台、权限、数据中心、工作流和 AI 操作手册。
-- `docs/modules`：TMS、VMS、FMS、HR、SMIS 与司机端业务说明。
+- `docs/modules`：MDM、MES、WMS、TMS、VMS、FMS、HR、SMIS 与司机端业务说明。
 - `docs/development`：架构、前端约定、Supabase、模块协作和质量门禁。
 - `docs/operations`：部署、安全、升级维护和故障排查。
 - `docs/reference`：命令、环境变量、目录和仓库元信息速查。

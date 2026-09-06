@@ -10,9 +10,12 @@
   ├─ Platform：认证、布局、菜单、租户、权限、公共组件、Store
   │    ├─ @fms/*  财务
   │    ├─ @hr/*   人力
+  │    ├─ @mdm/*  主数据与生产基础
+  │    ├─ @mes/*  制造执行
   │    ├─ @smis/* 安全生产
   │    ├─ @tms/*  运输
-  │    └─ @vms/*  车辆
+  │    ├─ @vms/*  车辆
+  │    └─ @wms/*  仓储
   │
   └─ 统一 API 门面 src/api/**
        │
@@ -28,9 +31,12 @@
 | `art-supabase-pro`  | 公共运行壳、平台页面、认证、租户、菜单、权限、共享组件、公共 API、Supabase 公共客户端 |
 | `art-supabase-fms`  | FMS 页面、业务 API、类型与财务规则                                                    |
 | `art-supabase-hr`   | HR 页面、业务 API、类型与人力规则                                                     |
+| `art-supabase-mdm`  | MDM 页面、治理目录、生产基础配置、业务 API 与类型                                     |
+| `art-supabase-mes`  | MES 页面、业务 API、类型与制造执行规则                                                |
 | `art-supabase-smis` | SMIS 页面、API、类型、迁移与领域 Edge Functions                                       |
 | `art-supabase-tms`  | TMS 页面、API、类型、运输规则与领域 Edge Functions                                    |
 | `art-supabase-vms`  | VMS 页面、API、类型、车辆规则与车辆健康 Edge Function                                 |
+| `art-supabase-wms`  | WMS 页面、业务 API、类型与仓储执行规则                                                |
 | `art-supabase-doc`  | 官网、使用手册、开发和运维文档                                                        |
 
 ## 动态菜单与页面装载

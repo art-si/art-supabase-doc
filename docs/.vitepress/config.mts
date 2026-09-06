@@ -60,6 +60,9 @@ export default defineConfig({
         {
           text: '业务应用',
           items: [
+            { text: 'MDM 主数据治理', link: '/modules/mdm' },
+            { text: 'MES 制造执行', link: '/modules/mes' },
+            { text: 'WMS 仓储管理', link: '/modules/wms' },
             { text: 'TMS 智慧运输', link: '/modules/tms' },
             { text: 'VMS 车辆管理', link: '/modules/vms' },
             { text: 'FMS 财务管理', link: '/modules/fms' },

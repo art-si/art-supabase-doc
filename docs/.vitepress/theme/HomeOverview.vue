@@ -5,7 +5,7 @@ const journey = [
   { number: '01', title: '获取代码', text: '拉取主仓与固定版本的业务子模块。' },
   { number: '02', title: '连接 Supabase', text: '配置项目 URL、发布密钥与服务端能力。' },
   { number: '03', title: '建立权限', text: '创建租户、组织、用户、角色与按钮授权。' },
-  { number: '04', title: '进入业务', text: '按需启用 TMS、VMS、FMS、HR 与 SMIS。' },
+  { number: '04', title: '进入业务', text: '按需启用 MDM、MES、WMS、TMS、VMS、FMS、HR 与 SMIS。' },
 ]
 
 const audiences = [
