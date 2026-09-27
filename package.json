@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Art Supabase Pro 官方文档站",
+  "description": "亿企工场官方文档站",
   "packageManager": "pnpm@11.9.0",
   "engines": {
     "node": ">=22.0.0",

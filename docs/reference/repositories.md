@@ -4,19 +4,19 @@
 
 ## 推荐简介
 
-| 仓库                         | 简介                                                                                                        | Homepage                                         |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| `art-supabase-pro`           | Vue 3 + Supabase 模块化企业业务平台，统一多租户、权限、审批、八大业务应用、司机协同与可治理 AI。            | `https://869123771.github.io/art-supabase-pro/`  |
-| `art-supabase-mdm`           | Art Supabase Pro 主数据治理应用，覆盖统一目录、来源追溯、资料质量、生产组织、工厂日历、工作中心与工艺路线。 | `https://869123771.github.io/art-supabase-mdm/`  |
-| `art-supabase-mes`           | Art Supabase Pro 制造执行应用，已完成平台接入与制造工作台，规划生产计划、排程派工、报工、质量和追溯。       | `https://869123771.github.io/art-supabase-mes/`  |
-| `art-supabase-wms`           | Art Supabase Pro 仓储管理应用，已完成平台接入与仓储工作台，规划库存、入库、库内、出库、盘点和作业追溯。     | `https://869123771.github.io/art-supabase-wms/`  |
-| `art-supabase-tms`           | Art Supabase Pro 智慧运输应用，覆盖主数据、智能开单、运单调度、在途监控、签收回单与司机协同。               | `https://869123771.github.io/art-supabase-tms/`  |
-| `art-supabase-vms`           | Art Supabase Pro 车辆管理应用，覆盖一车一档、保险年检、维修事故、零部件、里程、提醒与车辆健康。             | `https://869123771.github.io/art-supabase-vms/`  |
-| `art-supabase-fms`           | Art Supabase Pro 财务管理应用，覆盖运输结算、资金、会计核算、票税资产、报表与智能财务分析。                 | `https://869123771.github.io/art-supabase-fms/`  |
-| `art-supabase-hr`            | Art Supabase Pro 人力资源应用，覆盖组织岗位、员工生命周期、招聘、考勤薪酬、绩效人才与员工服务。             | `https://869123771.github.io/art-supabase-hr/`   |
-| `art-supabase-smis`          | Art Supabase Pro 安全生产应用，覆盖设备台账、资质培训、应急救援、反违章、劳保工器具与事故管理。             | `https://869123771.github.io/art-supabase-smis/` |
-| `supabase-mobile-tms-driver` | Art Supabase TMS 司机端，支持 H5 与微信小程序的接单、定位打卡、装卸货、签收回单、收车和费用上报。           | 按实际 H5 部署地址填写                           |
-| `art-supabase-doc`           | Art Supabase Pro 官方文档，覆盖平台、业务模块、司机端、Supabase 安全、开发、部署、运维与排障。              | `https://869123771.github.io/art-supabase-doc/`  |
+| 仓库                         | 简介                                                                                                | Homepage                                         |
+| ---------------------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| `art-supabase-pro`           | Vue 3 + Supabase 模块化企业业务平台，统一多租户、权限、审批、八大业务应用、司机协同与可治理 AI。    | `https://869123771.github.io/art-supabase-pro/`  |
+| `art-supabase-mdm`           | 亿企工场 主数据治理应用，覆盖统一目录、来源追溯、资料质量、生产组织、工厂日历、工作中心与工艺路线。 | `https://869123771.github.io/art-supabase-mdm/`  |
+| `art-supabase-mes`           | 亿企工场 制造执行应用，已完成平台接入与制造工作台，规划生产计划、排程派工、报工、质量和追溯。       | `https://869123771.github.io/art-supabase-mes/`  |
+| `art-supabase-wms`           | 亿企工场 仓储管理应用，已完成平台接入与仓储工作台，规划库存、入库、库内、出库、盘点和作业追溯。     | `https://869123771.github.io/art-supabase-wms/`  |
+| `art-supabase-tms`           | 亿企工场 智慧运输应用，覆盖主数据、智能开单、运单调度、在途监控、签收回单与司机协同。               | `https://869123771.github.io/art-supabase-tms/`  |
+| `art-supabase-vms`           | 亿企工场 车辆管理应用，覆盖一车一档、保险年检、维修事故、零部件、里程、提醒与车辆健康。             | `https://869123771.github.io/art-supabase-vms/`  |
+| `art-supabase-fms`           | 亿企工场 财务管理应用，覆盖运输结算、资金、会计核算、票税资产、报表与智能财务分析。                 | `https://869123771.github.io/art-supabase-fms/`  |
+| `art-supabase-hr`            | 亿企工场 人力资源应用，覆盖组织岗位、员工生命周期、招聘、考勤薪酬、绩效人才与员工服务。             | `https://869123771.github.io/art-supabase-hr/`   |
+| `art-supabase-smis`          | 亿企工场 安全生产应用，覆盖设备台账、资质培训、应急救援、反违章、劳保工器具与事故管理。             | `https://869123771.github.io/art-supabase-smis/` |
+| `supabase-mobile-tms-driver` | 亿企工场 TMS 司机端，支持 H5 与微信小程序的接单、定位打卡、装卸货、签收回单、收车和费用上报。       | 按实际 H5 部署地址填写                           |
+| `art-supabase-doc`           | 亿企工场官方文档，覆盖平台、业务模块、司机端、Supabase 安全、开发、部署、运维与排障。               | `https://869123771.github.io/art-supabase-doc/`  |
 
 ## 推荐 Topics
 
@@ -45,5 +45,5 @@ vue3 typescript supabase postgresql multi-tenant rbac workflow tms vms fms hrms 
 
 1. Gitee 与 GitHub 使用同一条简介，避免双端长期漂移。
 2. Homepage 只填写已经可以访问的地址；司机端未公开部署时可以留空。
-3. README 标题、仓库简介和 Topics 使用同一组产品名：Art Supabase Pro / MDM / MES / WMS / TMS / VMS / FMS / HR / SMIS。
+3. README 标题、仓库简介和 Topics 使用同一组产品名：亿企工场 / MDM / MES / WMS / TMS / VMS / FMS / HR / SMIS。
 4. 功能尚未进入当前分支时不要提前写入简介；具体能力以各仓 README 和官方文档为准。

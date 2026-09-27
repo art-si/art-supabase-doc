@@ -61,7 +61,7 @@ const audiences = [
     <figure class="product-frame">
       <img
         :src="withBase('/screenshots/dashboard.png')"
-        alt="Art Supabase Pro 运输运营工作台，展示待配载、运输中与风险任务"
+        alt="亿企工场 运输运营工作台，展示待配载、运输中与风险任务"
         width="1280"
         height="720"
         loading="lazy"

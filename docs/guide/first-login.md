@@ -2,7 +2,7 @@
 
 首次上线的目标不是只创建一个管理员账号，而是建立“租户 → 组织 → 用户 → 角色 → 菜单/按钮”的最小权限闭环。
 
-![Art Supabase Pro 登录页](/screenshots/login.png)
+![亿企工场 登录页](/screenshots/login.png)
 
 ## 初始化顺序
 

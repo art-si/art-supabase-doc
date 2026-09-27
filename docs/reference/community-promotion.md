@@ -5,12 +5,12 @@
 ## 推荐标题
 
 - 通用：我把一套 Vue 3 + Supabase 企业业务系统拆成了 11 个协作仓库
-- 技术社区：Art Supabase Pro：Vue 3 + Supabase 的多租户、权限、审批与模块化实践
+- 技术社区：亿企工场：Vue 3 + Supabase 的多租户、权限、审批与模块化实践
 - 产品社区：从主数据到制造、仓储和运输，一套开源企业业务平台如何连接八个业务应用
 
 ## 头条版
 
-我最近把持续开发的 Art Supabase Pro 做了一次完整整理，并将主平台、八个 Web 业务应用、司机端和官方文档分别维护为边界清晰、可以独立演进的协作仓库。
+我最近把持续开发的 亿企工场 做了一次完整整理，并将主平台、八个 Web 业务应用、司机端和官方文档分别维护为边界清晰、可以独立演进的协作仓库。
 
 它不是只有一个后台模板页面。平台以 Vue 3、TypeScript、Vite 和 Supabase 为基础，统一处理登录、多租户、菜单按钮权限、字段权限、审批工作流、文件预览和可治理 AI；业务层包含 MDM 主数据治理、MES 制造执行、WMS 仓储管理、TMS 智慧运输、VMS 车辆管理、FMS 财务管理、HR 人力资源与 SMIS 安全生产。MDM 已覆盖统一目录与生产基础配置，MES 和 WMS 已完成平台接入与工作台，后续执行能力按公开路线建设。
 
@@ -32,7 +32,7 @@ GitHub：<https://github.com/869123771/art-supabase-pro>
 
 ## OSChina 版
 
-Art Supabase Pro 是一套基于 Vue 3、TypeScript、Vite、Element Plus、Supabase 与 PostgreSQL 的模块化企业业务平台。项目将平台底座和领域应用分离：主仓负责认证、租户上下文、动态菜单、按钮与字段权限、审批工作流、公共组件和 Supabase 客户端；MDM、MES、WMS、TMS、VMS、FMS、HR、SMIS 分别维护自己的页面、API、类型和领域规则，司机端使用 uni-app 提供 H5 与微信小程序构建。
+亿企工场 是一套基于 Vue 3、TypeScript、Vite、Element Plus、Supabase 与 PostgreSQL 的模块化企业业务平台。项目将平台底座和领域应用分离：主仓负责认证、租户上下文、动态菜单、按钮与字段权限、审批工作流、公共组件和 Supabase 客户端；MDM、MES、WMS、TMS、VMS、FMS、HR、SMIS 分别维护自己的页面、API、类型和领域规则，司机端使用 uni-app 提供 H5 与微信小程序构建。
 
 ### 为什么拆成多个仓库
 
@@ -67,9 +67,9 @@ GitHub 镜像：<https://github.com/869123771/art-supabase-pro>
 
 ## GitHub Release / Discussion 版
 
-### Art Supabase Pro ecosystem refresh
+### Yiqi Workshop ecosystem refresh
 
-This release refreshes the complete Art Supabase Pro ecosystem:
+This release refreshes the complete Yiqi Workshop ecosystem:
 
 - Reworked Chinese and English READMEs for MDM, MES, and WMS, and connected their module documentation to the official site.
 - Added current product screenshots for HR, SMIS, finance, transportation, vehicle lifecycle, and the mobile driver workspace.

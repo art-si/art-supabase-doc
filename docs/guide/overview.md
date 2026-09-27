@@ -1,6 +1,6 @@
 # 产品概览
 
-Art Supabase Pro 是一个以 Vue 3、TypeScript、Element Plus 和 Supabase 为核心的企业级业务中台。它不是只有页面样式的后台模板，而是把认证、多租户、权限、审批、业务应用和 AI 治理组织成可以继续交付的工程。
+亿企工场 是一个以 Vue 3、TypeScript、Element Plus 和 Supabase 为核心的企业级业务中台。它不是只有页面样式的后台模板，而是把认证、多租户、权限、审批、业务应用和 AI 治理组织成可以继续交付的工程。
 
 ## 适用场景
 

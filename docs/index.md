@@ -2,12 +2,12 @@
 layout: home
 
 hero:
-  name: Art Supabase Pro
+  name: 亿企工场
   text: 企业级业务中台使用与开发文档
   tagline: 从 Supabase 安全基座，到主数据、制造、仓储、运输、车辆、财务、人力、安全生产、司机协同与 AI 治理，一套文档讲清部署、使用、扩展和运维。
   image:
     src: /logo.webp
-    alt: Art Supabase Pro 标志
+    alt: 亿企工场 标志
   actions:
     - theme: brand
       text: 5 分钟快速开始

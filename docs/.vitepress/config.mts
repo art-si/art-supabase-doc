@@ -4,9 +4,9 @@ const publicBase = process.env.DOCS_BASE || '/art-supabase-doc/'
 
 export default defineConfig({
   lang: 'zh-CN',
-  title: 'Art Supabase Pro',
-  titleTemplate: ':title · Art Supabase Pro 文档',
-  description: 'Art Supabase Pro 官方使用手册、开发指南与部署文档',
+  title: '亿企工场',
+  titleTemplate: ':title · 亿企工场 文档',
+  description: '亿企工场 官方使用手册、开发指南与部署文档',
   base: publicBase,
   cleanUrls: true,
   lastUpdated: true,
@@ -15,7 +15,7 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', href: `${publicBase}logo.webp` }],
     ['meta', { name: 'theme-color', content: '#5b5bd6' }],
-    ['meta', { name: 'author', content: 'Art Supabase Pro' }],
+    ['meta', { name: 'author', content: '亿企工场' }],
   ],
   markdown: {
     lineNumbers: true,
@@ -23,7 +23,7 @@ export default defineConfig({
   },
   themeConfig: {
     logo: '/logo.webp',
-    siteTitle: 'Art Supabase Pro',
+    siteTitle: '亿企工场',
     nav: [
       { text: '快速开始', link: '/guide/quick-start' },
       { text: '使用手册', link: '/manual/platform' },
@@ -127,7 +127,7 @@ export default defineConfig({
     ],
     footer: {
       message: '基于 MulanPSL-2.0 发布',
-      copyright: 'Copyright © 2025–present Art Supabase Pro',
+      copyright: 'Copyright © 2025–present 亿企工场',
     },
     returnToTopLabel: '返回顶部',
     sidebarMenuLabel: '文档目录',
