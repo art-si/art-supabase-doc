@@ -22,7 +22,7 @@ features:
   - title: 多业务应用协作
     details: Platform 统一认证与权限，MDM、MES、WMS、TMS、VMS、FMS、HR、SMIS 独立维护，司机端协同履约并由服务端契约贯通。
   - title: 可治理的 AI
-    details: 普通用户获得安全只读能力，受控写入、配置与发布保留平台超级权限和完整审计。
+    details: 普通用户可安全只读，并凭业务 Add 权限在本租户 AI 建档；其他受控写入、配置与发布保留平台超级权限和完整审计。
   - title: 可复现工程质量
     details: 类型、Lint、单元测试、数据库测试、UI 审计、E2E 与构建预算组成交付门禁。
 ---
