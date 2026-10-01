@@ -34,7 +34,7 @@ art-supabase-pro/
 │  ├─ unit/                # 单元测试
 │  └─ e2e/                 # Playwright 流程和视觉测试
 ├─ playwright/             # 测试认证状态与辅助资源
-├─ screenshort/            # 产品真实截图
+├─ screenshots/            # 产品真实截图
 ├─ .agents/skills/         # 项目开发与 UI 约定
 └─ .mcp.json               # 项目 Supabase MCP 配置
 ```
