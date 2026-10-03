@@ -70,4 +70,20 @@ git submodule update --init --recursive
 
 ## 独立运行
 
+### 平台包与独立构建验证
+
+模块 Vite 配置按显式 `ART_SUPABASE_PLATFORM_ROOT`、宿主主仓、相邻平台仓、安装的平台包依次定位运行时。在主仓目录内直接构建模块通常使用宿主源码，不能证明发布包完整。
+
+平台 `package.json` 的 `files` 必须包含 `scripts/module-vite-config.mjs` 及其依赖的构建日志策略文件。修改平台公共 API 或共享组件后，需要检查实际打包清单，并强制模块指向解包后的平台运行时验证构建。模块目录内可这样核验已安装的平台包：
+
+```powershell
+$env:ART_SUPABASE_PLATFORM_ROOT = (Resolve-Path node_modules/art-supabase-pro).Path
+pnpm build
+Remove-Item Env:ART_SUPABASE_PLATFORM_ROOT
+```
+
+验证当前未提交的平台改动可使用主仓 `pnpm modules:build -- tms --workspace-platform`；它临时打包当前平台工作区供模块联调。宿主源码或包内源码构建复用本机依赖时，都不能代替全新目录内按锁文件安装、类型检查与构建的交付检查。
+
+公共 API 重命名必须同时迁移模块调用方。独立发布时还需将模块锁定的平台版本与已发布的新 API 版本同步，不能假设旧平台归档包已包含工作区中的新导出。
+
 FMS/HR/SMIS/VMS/TMS/MDM/WMS/MES/PMIS/SCM 分别使用 3012–3021 开发端口；端口与公共路径速查见[环境配置](/guide/configuration)。业务子仓生产默认输出到各仓 `docs/` 并使用 `/art-supabase-<code>/` 公共路径。司机端使用 `pnpm dev:h5` 或 `pnpm dev:mp-weixin` 独立运行。当前 Web 业务生产推荐仍由平台宿主统一聚合；跨域独立部署需要服务端一次性授权码 SSO，不能在 URL 中传 access token 或 refresh token。
