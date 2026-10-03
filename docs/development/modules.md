@@ -70,4 +70,4 @@ git submodule update --init --recursive
 
 ## 独立运行
 
-FMS/HR/SMIS/VMS/TMS/MDM/WMS/MES 分别使用 3012–3019 开发端口，生产默认输出到各仓 `docs/` 并使用 `/art-supabase-<code>/` 公共路径。司机端使用 `pnpm dev:h5` 或 `pnpm dev:mp-weixin` 独立运行。当前 Web 业务生产推荐仍由平台宿主统一聚合；跨域独立部署需要服务端一次性授权码 SSO，不能在 URL 中传 access token 或 refresh token。
+FMS/HR/SMIS/VMS/TMS/MDM/WMS/MES/PMIS/SCM 分别使用 3012–3021 开发端口；端口与公共路径速查见[环境配置](/guide/configuration)。业务子仓生产默认输出到各仓 `docs/` 并使用 `/art-supabase-<code>/` 公共路径。司机端使用 `pnpm dev:h5` 或 `pnpm dev:mp-weixin` 独立运行。当前 Web 业务生产推荐仍由平台宿主统一聚合；跨域独立部署需要服务端一次性授权码 SSO，不能在 URL 中传 access token 或 refresh token。

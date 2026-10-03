@@ -22,13 +22,18 @@ art-supabase-pro/
 │  ├─ art-supabase-doc/    # 官方文档站
 │  ├─ art-supabase-fms/    # 财务业务仓
 │  ├─ art-supabase-hr/     # 人力业务仓
+│  ├─ art-supabase-mdm/    # 主数据业务仓
+│  ├─ art-supabase-mes/    # 制造执行业务仓
+│  ├─ art-supabase-pmis/   # 设备管理业务仓
+│  ├─ art-supabase-scm/    # 供应链业务仓
+│  ├─ art-supabase-site/   # 独立产品官网
 │  ├─ art-supabase-smis/   # 安全生产业务仓
 │  ├─ art-supabase-tms/    # 运输业务仓
-│  └─ art-supabase-vms/    # 车辆业务仓
+│  ├─ art-supabase-vms/    # 车辆业务仓
+│  └─ art-supabase-wms/    # 仓储业务仓
 ├─ supabase/
 │  ├─ functions/           # 公共 Edge Functions 与共享模块
-│  ├─ migrations/          # 平台数据库迁移
-│  └─ tests/               # 数据库测试
+│  └─ tests/               # 数据库安全断言；不保存逐版本迁移 SQL
 ├─ scripts/                # 审计、构建、模块管理和快照脚本
 ├─ tests/
 │  ├─ unit/                # 单元测试
@@ -49,7 +54,7 @@ supabase-mobile-tms-driver/
 │  ├─ api/                 # Supabase、运单、费用、车辆与档案契约
 │  ├─ stores/              # 身份、司机档案、字典与运单状态
 │  └─ static/              # 移动端静态资源
-├─ supabase/               # 司机端相关函数、迁移或配置
+├─ supabase/               # 司机端相关函数或配置（按实际仓库）
 ├─ docs/                   # H5 生产构建产物
 └─ package.json
 ```
@@ -63,7 +68,7 @@ art-supabase-<domain>/
 │  ├─ api/                 # 领域 API 门面和 Provider
 │  ├─ types/               # 领域类型
 │  └─ integrations/        # 必要的稳定集成入口
-├─ supabase/               # 领域迁移、函数或规则（按仓库需要）
+├─ supabase/               # 可独立部署的领域函数或规则（按仓库需要）
 ├─ tests/unit/             # 领域规则测试
 ├─ docs/                   # 独立应用构建产物（子仓约定）
 └─ package.json

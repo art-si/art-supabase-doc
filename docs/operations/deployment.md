@@ -5,7 +5,7 @@
 ## 主应用发布顺序
 
 1. 冻结目标主仓提交和所有子模块 gitlink。
-2. 在开发/预发布 Supabase 项目验证迁移、RLS、函数与 Edge Functions。
+2. 在开发/预发布 Supabase 项目验证数据库变更、RLS、函数与 Edge Functions，并准备可恢复备份。
 3. 先发布向后兼容的数据库新增契约和 Edge Functions。
 4. 配置生产环境变量与 Function Secrets。
 5. 运行 `pnpm check:ci` 或组织批准的等价门禁。
@@ -64,7 +64,7 @@ Gitee 社区版 Pages 已下线，因此文档仓保留在 Gitee 作为代码源
 | 安装命令 | `pnpm install --frozen-lockfile` |
 | 构建命令 | `pnpm docs:build`                |
 | 输出目录 | `docs/.vitepress/dist`           |
-| Node.js  | 20 或更高                        |
+| Node.js  | 22 或更高                        |
 
 ## 上线冒烟清单
 
@@ -78,4 +78,4 @@ Gitee 社区版 Pages 已下线，因此文档仓保留在 Gitee 作为代码源
 
 ## 回滚
 
-保留上一版静态产物、主仓提交、子模块指针、数据库迁移清单和 Edge Function 版本。回滚先恢复前端消费者；数据库只回滚已经证明可逆且不会丢数据的变更。破坏性 schema 删除应在多个版本后执行，而不是与消费者更新同时发生。
+保留上一版静态产物、主仓提交、子模块指针、数据库变更记录与可恢复备份，以及 Edge Function 版本。回滚先恢复前端消费者；数据库只回滚已经证明可逆且不会丢数据的变更。破坏性 schema 删除应在多个版本后执行，而不是与消费者更新同时发生。

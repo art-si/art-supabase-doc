@@ -23,7 +23,7 @@ Supabase 模式缺少 `VITE_SUPABASE_URL` 或 `VITE_SUPABASE_KEY` 时，应用�
 
 ## 应用身份与公共路径
 
-`VITE_APP_CODE` 可取 `platform`、`fms`、`hr`、`smis`、`tms`、`vms`、`mdm`、`wms`、`mes`。主平台通常使用 `platform`；独立业务壳使用自己的应用代码，并从平台权限契约获得对应菜单。
+`VITE_APP_CODE` 可取 `platform`、`fms`、`hr`、`smis`、`tms`、`vms`、`mdm`、`wms`、`mes`、`pmis`、`scm`。主平台通常使用 `platform`；独立业务壳使用自己的应用代码，并从平台权限契约获得对应菜单。
 
 | 应用     | 默认端口 | 默认部署路径          |
 | -------- | -------: | --------------------- |
@@ -36,6 +36,8 @@ Supabase 模式缺少 `VITE_SUPABASE_URL` 或 `VITE_SUPABASE_KEY` 时，应用�
 | MDM      |     3017 | `/art-supabase-mdm/`  |
 | WMS      |     3018 | `/art-supabase-wms/`  |
 | MES      |     3019 | `/art-supabase-mes/`  |
+| PMIS     |     3020 | `/art-supabase-pmis/` |
+| SCM      |     3021 | `/art-supabase-scm/`  |
 
 部署到域名根目录时设置 `VITE_BASE_URL=/`；部署到 Pages 子路径时，值必须以 `/` 开始和结束。
 

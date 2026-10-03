@@ -13,7 +13,7 @@ export default defineConfig({
   ignoreDeadLinks: false,
   sitemap: { hostname: 'https://869123771.github.io/art-supabase-doc/' },
   head: [
-    ['link', { rel: 'icon', href: `${publicBase}logo.webp` }],
+    ['link', { rel: 'icon', href: `${publicBase}logo-platform.webp` }],
     ['meta', { name: 'theme-color', content: '#5b5bd6' }],
     ['meta', { name: 'author', content: '亿企工场' }],
   ],
@@ -22,7 +22,7 @@ export default defineConfig({
     theme: { light: 'github-light', dark: 'github-dark' },
   },
   themeConfig: {
-    logo: '/logo.webp',
+    logo: '/logo-platform.webp',
     siteTitle: '亿企工场',
     nav: [
       { text: '快速开始', link: '/guide/quick-start' },
@@ -60,11 +60,13 @@ export default defineConfig({
         {
           text: '业务应用',
           items: [
+            { text: 'SCM 供应链管理', link: '/modules/scm' },
             { text: 'MDM 主数据治理', link: '/modules/mdm' },
             { text: 'MES 制造执行', link: '/modules/mes' },
             { text: 'WMS 仓储管理', link: '/modules/wms' },
             { text: 'TMS 智慧运输', link: '/modules/tms' },
             { text: 'VMS 车辆管理', link: '/modules/vms' },
+            { text: 'PMIS 设备管理', link: '/modules/pmis' },
             { text: 'FMS 财务管理', link: '/modules/fms' },
             { text: 'HR 人力资源', link: '/modules/hr' },
             { text: 'SMIS 安全生产', link: '/modules/smis' },

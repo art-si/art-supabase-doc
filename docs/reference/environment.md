@@ -4,15 +4,15 @@
 
 ## 核心运行
 
-| 变量                | 示例                      | 说明                                    |
-| ------------------- | ------------------------- | --------------------------------------- |
-| `VITE_API_PROVIDER` | `supabase`                | `supabase` 或 `java`                    |
-| `VITE_SUPABASE_URL` | `https://xxx.supabase.co` | Supabase Project URL                    |
-| `VITE_SUPABASE_KEY` | `sb_publishable_...`      | 浏览器 publishable key；兼容旧 anon key |
-| `VITE_APP_CODE`     | `platform`                | `platform/fms/hr/smis/tms/vms`          |
-| `VITE_BASE_URL`     | `/art-supabase-pro/`      | 静态公共路径                            |
-| `VITE_PORT`         | `3006`                    | 开发端口                                |
-| `VITE_OUT_DIR`      | `docs`                    | 构建输出目录                            |
+| 变量                | 示例                      | 说明                                                                |
+| ------------------- | ------------------------- | ------------------------------------------------------------------- |
+| `VITE_API_PROVIDER` | `supabase`                | `supabase` 或 `java`                                                |
+| `VITE_SUPABASE_URL` | `https://xxx.supabase.co` | Supabase Project URL                                                |
+| `VITE_SUPABASE_KEY` | `sb_publishable_...`      | 浏览器 publishable key；兼容旧 anon key                             |
+| `VITE_APP_CODE`     | `platform`                | `platform` 或已接入业务应用代码；见[环境配置](/guide/configuration) |
+| `VITE_BASE_URL`     | `/art-supabase-pro/`      | 静态公共路径                                                        |
+| `VITE_PORT`         | `3006`                    | 开发端口                                                            |
+| `VITE_OUT_DIR`      | `docs`                    | 构建输出目录                                                        |
 
 ## Java Provider
 

@@ -16,7 +16,7 @@ on public.business_record
 for select
 to authenticated
 using (
-  tenant_id = app_private.current_tenant_id()
+  app_private.tenant_in_current_read_scope(tenant_id)
 );
 ```
 
@@ -28,11 +28,11 @@ on public.business_record
 for update
 to authenticated
 using (
-  tenant_id = app_private.current_tenant_id()
+  tenant_id = app_private.current_user_tenant_id()
   and app_private.has_permission('Business:Edit')
 )
 with check (
-  tenant_id = app_private.current_tenant_id()
+  tenant_id = app_private.current_user_tenant_id()
   and app_private.has_permission('Business:Edit')
 );
 ```
@@ -69,17 +69,15 @@ GRANT 决定角色能否访问对象，RLS 决定能访问哪些行，两者不�
 
 Edge Function 负责 AI、通知、受控 SQL 等服务端能力。入口应校验 JWT、用户状态、租户、功能开关和精确权限；外部 Provider 密钥存入 Function Secrets。响应只返回业务需要字段，原始 Provider 错误进入受控日志。
 
-## 迁移工作流
+## 数据库变更工作流
 
-不要手写迁移文件时间戳。先查看 CLI 帮助，再创建迁移：
+本项目不在仓库保存逐版本迁移 SQL。先验证可恢复备份，再在目标项目的 `BEGIN`／`ROLLBACK` 事务中检查 SQL、依赖关系、租户越界情况和回滚结果。审核后通过项目绑定的 Supabase MCP `execute_sql` 直接执行；MCP 不可用时才使用文档化的 CLI 后备方式。完成后立即运行数据库断言、security/performance advisors 和相关应用测试。`pnpm test:db` 需要有效的 Supabase CLI 登录；只有 MCP 登录时，可用项目 MCP 执行同一份只读测试 SQL。
 
-```powershell
-supabase --help
-supabase migration --help
-supabase migration new add_business_feature
-```
+带 `tenant_id` 的表若保留平台超级管理员的 `FOR ALL` 写入策略，其 SELECT 还必须有 `AS RESTRICTIVE` 的租户范围策略。宽松的功能权限策略不能覆盖“已选租户”范围；普通用户伪造租户请求仍须落在本人租户。2026-10-01 的策略盘点已为遗漏的 42 张表补齐限制性读取范围，保留 28 条原有读取授权；`supabase/tests/database_security_policy_test.sql` 固化了这一检查。AI 开单建档 RPC 允许具备 `AiFill` 与对应 `Add` 按钮权限的普通用户写入本人租户。TMS 货物与站点的直接写入按按钮权限控制；平台超级管理员在全部租户下新增站点，默认归入自己的平台租户，也可指定具体业务租户。站点类型由受控 RPC 和触发器维护，普通账号不可直接写类型表；具备 AI 填单与站点新增权限的普通用户可通过 AI 建站并自动生成类型关联。
 
-在开发分支/本地项目验证 SQL、RLS、函数和回滚路径。完成后运行 advisors、数据库测试和迁移列表检查。生产变更优先新增兼容契约，避免同一版本中先删旧字段再更新消费者。
+截至 2026-10-02，TMS 合同新增与导入 RPC 仍固定写入登录人租户；客户端在“全部租户”下默认平台租户，并暂时阻断已选其他租户时的新增与导入，防止误写。承运商选项 RPC 对平台超级管理员还未按已选租户收窄。完成新鲜、可恢复的备份后，应同时修正合同目标租户解析、承运商选项范围和回滚事务回归检查，再移除客户端临时限制。
+
+财务发票、收付款凭证 OCR 的代码已把图片、识别审计和复核绑定到同一目标租户：“全部租户”默认平台管理员本人租户，明确选租户则使用所选租户；普通用户伪造租户头不能越界。Edge Function 源码尚未部署。线上 `save_tms_invoice_secure` 对关联对账单仍用登录人租户校验，和底层按往来单位归属确定发票租户的行为不一致；取得新的可恢复备份后，需一起修正并验证跨租户发票登记与附件归属。
 
 ## Realtime
 

@@ -1,6 +1,6 @@
 # Yiqi Workshop Documentation
 
-The official VitePress documentation site for [Yiqi Workshop](https://gitee.com/wangyanghub/art-supabase-pro). It covers the shared platform, MDM, MES, WMS, TMS, VMS, FMS, HR, SMIS, the driver app, governed AI, setup, development, Supabase security, deployment, and operations.
+The official VitePress documentation site for [Yiqi Workshop](https://gitee.com/wangyanghub/art-supabase-pro). It covers the shared platform, SCM, MDM, MES, WMS, TMS, VMS, PMIS, FMS, HR, SMIS, the driver app, governed AI, setup, development, Supabase security, deployment, and operations.
 
 [Gitee](https://gitee.com/wangyanghub/art-supabase-doc) · [GitHub](https://github.com/869123771/art-supabase-doc) · [Live Documentation](https://869123771.github.io/art-supabase-doc/) · [简体中文](./README.md)
 

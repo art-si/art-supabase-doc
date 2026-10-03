@@ -5,7 +5,11 @@ const journey = [
   { number: '01', title: '获取代码', text: '拉取主仓与固定版本的业务子模块。' },
   { number: '02', title: '连接 Supabase', text: '配置项目 URL、发布密钥与服务端能力。' },
   { number: '03', title: '建立权限', text: '创建租户、组织、用户、角色与按钮授权。' },
-  { number: '04', title: '进入业务', text: '按需启用 MDM、MES、WMS、TMS、VMS、FMS、HR 与 SMIS。' },
+  {
+    number: '04',
+    title: '进入业务',
+    text: '按需启用 SCM、MDM、MES、WMS、TMS、VMS、PMIS、FMS、HR 与 SMIS。',
+  },
 ]
 
 const audiences = [
@@ -61,12 +65,14 @@ const audiences = [
     <figure class="product-frame">
       <img
         :src="withBase('/screenshots/dashboard.png')"
-        alt="亿企工场 运输运营工作台，展示待配载、运输中与风险任务"
-        width="1280"
-        height="720"
+        alt="亿企工场工作台，展示今日运营概览、实时运输与车辆风险提醒"
+        width="1920"
+        height="878"
         loading="lazy"
       />
-      <figcaption>统一工作台将运营状态、待办任务与跨业务入口放在同一视野中。</figcaption>
+      <figcaption>
+        工作台汇总今日运营概览、调度入口、实时运输和车辆风险提醒；实际数据随租户与权限变化。
+      </figcaption>
     </figure>
   </section>
 </template>

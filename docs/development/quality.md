@@ -6,6 +6,9 @@
 
 ```powershell
 pnpm ui:audit
+pnpm reuse:audit
+pnpm permissions:audit
+pnpm database:security:audit
 pnpm typecheck
 pnpm lint
 pnpm test:unit
@@ -21,16 +24,18 @@ pnpm check
 
 ## 专项检查
 
-| 命令                     | 用途                                 |
-| ------------------------ | ------------------------------------ |
-| `pnpm permissions:audit` | 页面按钮、权限目录和服务端约束一致性 |
-| `pnpm snapshot:check`    | AI 项目快照是否与代码一致            |
-| `pnpm test:db`           | 数据库工作流测试                     |
-| `pnpm bundle:check`      | 构建体积预算                         |
-| `pnpm build:analyze`     | 构建体积分析报告                     |
-| `pnpm test:e2e:auth`     | 登录等公开页面桌面/移动可访问性      |
-| `pnpm test:e2e:critical` | 关键业务与 AI 配置继承流程           |
-| `pnpm test:e2e:core`     | 核心页面桌面/移动视觉回归            |
+| 命令                           | 用途                                 |
+| ------------------------------ | ------------------------------------ |
+| `pnpm permissions:audit`       | 页面按钮、权限目录和服务端约束一致性 |
+| `pnpm snapshot:check`          | AI 项目快照是否与代码一致            |
+| `pnpm database:security:audit` | 数据库安全契约静态审计               |
+| `pnpm reuse:audit`             | 跨仓公共代码复用审计                 |
+| `pnpm test:db`                 | 数据库安全策略断言                   |
+| `pnpm bundle:check`            | 构建体积预算                         |
+| `pnpm build:analyze`           | 构建体积分析报告                     |
+| `pnpm test:e2e:auth`           | 登录等公开页面桌面/移动可访问性      |
+| `pnpm test:e2e:critical`       | 关键业务与 AI 配置继承流程           |
+| `pnpm test:e2e:core`           | 核心页面桌面/移动视觉回归            |
 
 ## 完整 CI
 

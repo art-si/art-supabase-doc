@@ -30,25 +30,27 @@ git diff --submodule=log
 
 ## 质量
 
-| 命令                     | 说明                     |
-| ------------------------ | ------------------------ |
-| `pnpm ui:audit`          | 语义、组件和 UI 规则审计 |
-| `pnpm permissions:audit` | 业务按钮权限一致性       |
-| `pnpm typecheck`         | Vue/TypeScript 类型检查  |
-| `pnpm lint`              | ESLint                   |
-| `pnpm lint:stylelint`    | CSS/SCSS/Vue 样式检查    |
-| `pnpm test:unit`         | 单元测试                 |
-| `pnpm test:coverage`     | 带阈值的覆盖率测试       |
-| `pnpm test:db`           | 数据库工作流测试         |
-| `pnpm test:e2e`          | 全部 Playwright 测试     |
-| `pnpm test:e2e:auth`     | 认证页桌面/移动检查      |
-| `pnpm test:e2e:critical` | 关键业务流程             |
-| `pnpm test:e2e:core`     | 核心视觉回归             |
-| `pnpm check:fast`        | UI、类型、Lint、单元测试 |
-| `pnpm check`             | 快速检查加 Stylelint     |
-| `pnpm check:ci`          | 完整 CI 门禁             |
-| `pnpm snapshot:ai`       | 更新 AI 项目快照         |
-| `pnpm snapshot:check`    | 校验 AI 快照             |
+| 命令                           | 说明                     |
+| ------------------------------ | ------------------------ |
+| `pnpm ui:audit`                | 语义、组件和 UI 规则审计 |
+| `pnpm reuse:audit`             | 跨仓公共代码复用审计     |
+| `pnpm database:security:audit` | 数据库安全契约静态审计   |
+| `pnpm permissions:audit`       | 业务按钮权限一致性       |
+| `pnpm typecheck`               | Vue/TypeScript 类型检查  |
+| `pnpm lint`                    | ESLint                   |
+| `pnpm lint:stylelint`          | CSS/SCSS/Vue 样式检查    |
+| `pnpm test:unit`               | 单元测试                 |
+| `pnpm test:coverage`           | 带阈值的覆盖率测试       |
+| `pnpm test:db`                 | 数据库安全策略断言       |
+| `pnpm test:e2e`                | 全部 Playwright 测试     |
+| `pnpm test:e2e:auth`           | 认证页桌面/移动检查      |
+| `pnpm test:e2e:critical`       | 关键业务流程             |
+| `pnpm test:e2e:core`           | 核心视觉回归             |
+| `pnpm check:fast`              | UI、类型、Lint、单元测试 |
+| `pnpm check`                   | 快速检查加 Stylelint     |
+| `pnpm check:ci`                | 完整 CI 门禁             |
+| `pnpm snapshot:ai`             | 更新 AI 项目快照         |
+| `pnpm snapshot:check`          | 校验 AI 快照             |
 
 ## 文档站
 
@@ -68,10 +70,8 @@ CLI 更新较快，先用帮助发现命令：
 
 ```powershell
 supabase --help
-supabase migration --help
+supabase db --help
 supabase functions --help
-supabase migration new descriptive_name
-supabase migration list --local
 ```
 
-数据库变更前后还应运行项目可用的 advisors 和测试；不要凭记忆猜测 CLI 参数。
+本项目不生成逐版本迁移文件。数据库变更优先使用项目绑定的 Supabase MCP `execute_sql`；MCP 不可用时按[Supabase 开发](/development/supabase)使用经 CLI 帮助确认的后备命令。执行前后运行 advisors、断言和相关测试。

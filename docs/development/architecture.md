@@ -12,6 +12,8 @@
   │    ├─ @hr/*   人力
   │    ├─ @mdm/*  主数据与生产基础
   │    ├─ @mes/*  制造执行
+  │    ├─ @pmis/* 设备管理
+  │    ├─ @scm/*  供应链
   │    ├─ @smis/* 安全生产
   │    ├─ @tms/*  运输
   │    ├─ @vms/*  车辆
@@ -33,15 +35,18 @@
 | `art-supabase-hr`   | HR 页面、业务 API、类型与人力规则                                                     |
 | `art-supabase-mdm`  | MDM 页面、治理目录、生产基础配置、业务 API 与类型                                     |
 | `art-supabase-mes`  | MES 页面、业务 API、类型与制造执行规则                                                |
-| `art-supabase-smis` | SMIS 页面、API、类型、迁移与领域 Edge Functions                                       |
+| `art-supabase-pmis` | PMIS 点检、巡检、保养和维修页面与业务 API                                             |
+| `art-supabase-scm`  | SCM 报价、销售、采购单据与供应链业务 API                                              |
+| `art-supabase-smis` | SMIS 页面、API、类型与领域 Edge Functions                                             |
 | `art-supabase-tms`  | TMS 页面、API、类型、运输规则与领域 Edge Functions                                    |
 | `art-supabase-vms`  | VMS 页面、API、类型、车辆规则与车辆健康 Edge Function                                 |
 | `art-supabase-wms`  | WMS 页面、业务 API、类型与仓储执行规则                                                |
 | `art-supabase-doc`  | 官网、使用手册、开发和运维文档                                                        |
+| `art-supabase-site` | 独立产品官网及产品介绍                                                                |
 
 ## 动态菜单与页面装载
 
-业务导航来自 Supabase `sys_menu`。数据库保存稳定路由前缀，例如 `/tms/...`、`/vms/...`；主仓组件加载器把它映射到对应子仓 `src/views`。业务页面不能为了显示侧栏而写进静态路由。
+业务导航来自 Supabase `sys_menu`。数据库保存稳定路由前缀，例如 `/tms/...`、`/vms/...`；主仓组件加载器把它映射到对应子仓 `src/views`。业务页面不能为了显示侧栏而写进静态路由。文档仓和官网是独立静态站点，不装载为登录后的业务应用。
 
 ## API 边界
 
