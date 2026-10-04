@@ -38,6 +38,8 @@ pnpm check
 
 导出筛选结果时，分页大小只是单次请求大小，不能当作完整数据上限。单据和明细列表复用 `loadAllDocumentPages` / `loadAllLinePages` 分页取齐；导出取数不得修改列表的可见行状态。初始库存导出从原始单据取数，再将每张单据的明细展开一次，避免按明细展示时重复展开同一单据。导出上限应在文件生成边界明确报错，不能静默丢弃后续页；按钮文案必须说明实际导出范围。浏览器验收应解析下载文件，核对超过一页的数据行数、首尾记录和重复记录，而不仅检查下载事件。
 
+仓储导出浏览器用例集中在 `tests/e2e/wms-document-export.spec.ts`，供应链导出用例集中在 `tests/e2e/scm-document-export.spec.ts`；库存主数据页面用例保留在 `mdm-inventory-pages.spec.ts`。公共测试数据与初始化由 `tests/e2e/support/inventory-fixtures.ts` 提供，测试文件不得互相导入，以免重复注册用例。测试清单检查只能确认用例被发现，不能代替实际执行和下载文件检查。
+
 RPC 的包含式分页区间统一由 `src/utils/supabase/pagination.ts` 的 `buildSupabaseRpcRange` 构造。各业务接口保留自己的默认分页大小和导出上限；共享函数拒绝非安全整数，起始偏移修正为零后再约束结束位置。复用审计拒绝在 API 中直接对 `p_from`、`p_to` 重复使用 `Math.max`；分页单元测试覆盖负数、倒序区间及非法数值。
 
 全量分页读取 `fetchAllRangePages` 的分页大小必须是正安全整数，非法输入在发送查询前失败。结果累积逐条追加，避免大单页数据展开为函数参数时超出运行时参数数量限制；单元测试覆盖 20 万条单页数据的完整返回。
