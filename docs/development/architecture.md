@@ -92,3 +92,45 @@ View / Business Component
 - 全库只读扫描识别 1251 条 RESTRICT/NO ACTION 外键关系，物料对应 38 条；前端扫描覆盖 222 处命名删除函数的 `responseHandle` 调用。该扫描不是对所有业务自定义逻辑引用的覆盖声明，后续删除入口仍须遵守 `AGENTS.md` 的预检要求。
 - BOM 允许组件为空，移除前端组件数量校验及 `app_private.mdm_bom_guard()` 中“至少一个组件才能提交审核”的限制。组件存在时的字段、数量、租户、权限和生命周期校验继续执行。
 - 数据库直接执行前已备份原函数并进行事务回滚测试：空组件保存、提交审核通过；平台全部范围返回 256 条可见物料引用，指定范围返回 250 条，受测普通账号自身/伪造跨租户请求均为 0 条（该账号无可见引用权限），未发生越权。应用后核对空组件规则、调用者权限模式和匿名执行权限；安全检查未报告这两个函数的新增问题。测试未持久删除或改写业务记录。
+
+## 工序分配统计与完整读取（2026-10-06）
+
+工序绑定视图及导出不显示 BOM 分配数量，调用 `fetchProcessSteps` 时设置 `includeComponentAssignmentCounts: false`，避免每行额外一次 HEAD 查询。工艺序列关系通过 `fetchAllProcessRouteSteps` 复用共享完整分页工具，按 500 行读取，并以 `sort, code, id` 稳定排序；缺页或租户切换时阻止返回部分关系。显示分配数量的工序列表仍保留精确统计，不能将未查询的数量解释为已确认的零。
+
+### 待应用的批量统计边界
+
+2026-10-06 只读核验确认复合外键 `mdm_bom_item_process_route_step_fkey` 包含 `(tenant_id, process_route_step_id)`，两张表均启用 RLS。浏览器直连当前 Data API 的嵌入 `count()` 返回 `PGRST123`；不能直接将其替换进正式查询。旧 `count` 语法的匿名探针返回权限拒绝，不能证明真实身份下的统计行为，也不作为启用弃用语法的依据。
+
+以下为待核验可恢复备份后评审、事务验证并应用的候选 SQL，尚未执行，也没有接入正式 API。它按批次返回所有可见目标工序（无分配返回 0），保留调用者 RLS、复合租户关联及平台全部/指定/普通用户范围。应用前须验证真实平台全部、指定、普通本租户、普通伪造范围四组身份及不可见工序；应用后再将必要统计从逐行 HEAD 替换为一次批量 RPC。前端应拒绝缺少父工序计数的结果，避免并发删除或权限变化时静默显示 0。
+
+```sql
+create or replace function public.mdm_process_step_assignment_counts(p_step_ids uuid[])
+returns table (step_id uuid, assignment_count bigint)
+language plpgsql
+stable
+security invoker
+set search_path = ''
+as $function$
+begin
+  if auth.uid() is null then
+    raise exception '请登录后重新查询工序' using errcode = '42501';
+  end if;
+  if p_step_ids is null
+     or cardinality(p_step_ids) not between 1 and 1000
+     or array_position(p_step_ids, null) is not null then
+    raise exception '请选择 1 至 1000 个工序后重新查询' using errcode = '22023';
+  end if;
+  return query
+  select step.id, count(item.id)
+  from public.mdm_process_route_step as step
+  left join public.mdm_bom_item as item
+    on item.tenant_id = step.tenant_id
+   and item.process_route_step_id = step.id
+  where step.id = any(p_step_ids)
+    and app_private.tenant_in_current_read_scope(step.tenant_id)
+  group by step.id;
+end;
+$function$;
+revoke all on function public.mdm_process_step_assignment_counts(uuid[]) from public, anon;
+grant execute on function public.mdm_process_step_assignment_counts(uuid[]) to authenticated;
+```
