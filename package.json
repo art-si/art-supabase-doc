@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "description": "亿企工场官方文档站",
-  "packageManager": "pnpm@11.9.0",
+  "packageManager": "pnpm@11.28.2",
   "engines": {
-    "node": ">=22.0.0",
-    "pnpm": ">=11.9.0"
+    "node": ">=22.13.0",
+    "pnpm": ">=11.28.2"
   },
   "scripts": {
     "dev": "vitepress dev docs --host 0.0.0.0",
@@ -21,7 +21,7 @@
     "check": "pnpm format:check && pnpm docs:build"
   },
   "devDependencies": {
-    "prettier": "3.8.4",
+    "prettier": "3.9.9",
     "vitepress": "1.6.4"
   }
 }
