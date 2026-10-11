@@ -2792,3 +2792,217 @@ TMS 货品物料与 WMS 装配候选已复用主仓 loadAllDocumentPages，500�
 - 客户地址与货物批量删除原先先由表格确认，再在回调中检查专用引用；现在关闭提前确认，保留 get_governed_delete_dependency_details 专用检查，在检查通过后才确认。ArtTableQuery 对自定义动作中的 cancel/close 返回正常结束，不再误报操作失败。
 - 两页真实浏览器用例验证先检查、后确认，取消不发送删除且无错误提示，证据 .artifacts/governed-bulk-order。聚焦 ESLint、UI 审计通过，Stylelint 已执行。上一轮主仓类型检查已终态通过 .artifacts/contract-delete-zero-main-types.log；本轮 TMS 类型日志 .artifacts/governed-bulk-order-types.log 待终态。
 - 两页单条删除仍有旧 catch 和缺少并发重新检查问题，专用引用规则与通用守卫完整合并尚未完成；不能据本轮两项顺序验证宣称这两页全部删除场景或全局改造完成。
+
+### 2026-10-12 地址与货物拒绝后的专用引用复查
+
+- 两页单条删除不再吞掉所有失败，取消/关闭正常返回，其他失败重新使用 MasterDataDeleteGuard 的原有专用引用检查；守卫或资源未就绪时阻止删除并要求刷新重试。批量删除调用拒绝也重新检查引用，检查无阻断后才交回错误处理。
+- 初轮并发用例失败暴露共享表格会将部分行内删除分派到批量动作回调，补齐批量复查后再验证；保留该失败记录 .artifacts/governed-delete-recheck-final，最终结果见 .artifacts/governed-delete-recheck-verified。测试同时核验批量取消顺序与行内并发拒绝后显示新关联编号，不使用 force 或放宽编号断言。
+- 上一轮 TMS 类型检查已终态通过 .artifacts/governed-bulk-order-types.log；本轮聚焦 ESLint 与 UI 审计通过，TMS 类型检查 .artifacts/governed-delete-recheck-types.log 待终态。专用检查与通用守卫完整整合、重复接口失败 toast、零影响地址删除及线上授权跳转仍未全部完成。
+
+### 2026-10-12 地址与货物删除响应一致性
+
+- 四个删除接口失败提示统一交给引用守卫及页面处理，避免并发引用拒绝的通用 toast 与引用详情重复。全局搜索确认调用点均在这两页。只读 MCP 确认地址单条/批量 RPC 返回 boolean/integer，启用 requireAffected 并提供刷新重试文案，无线上修改。
+- 两页取消、并发拒绝、零影响共六项浏览器用例通过；并发拒绝后显示新引用且没有错误 toast，零影响复查后仅一个错误提示，没有成功提示。证据 .artifacts/governed-delete-response-final。零影响属于预期错误，表格的受控 console.error 仍在日志中；夹具仍缺个人中心路由，不能宣称浏览器日志完全无警告。
+- 聚焦 ESLint 通过；上一轮 TMS 类型检查 .artifacts/governed-delete-recheck-types.log 已终态通过，本轮 .artifacts/governed-delete-response-types.log 待终态。完整权限/租户快照复验、专用检查整合和线上授权引用跳转仍待继续处理。
+
+### 2026-10-12 地址与货物表格删除的租户范围快照
+
+- 两页表格删除回调复用 createTenantScopeReadGuard，进入操作时固定待删除 ID，在专用引用检查后、提交删除前和拒绝后复查前检查租户范围。范围变化阻止旧操作，也避免用新范围重新查询旧引用。未改变服务端租户规则。
+- 两页取消、并发拒绝、零影响和确认期间变更范围共八项浏览器用例通过；范围变化断言未发出删除请求，提示刷新重试。证据 .artifacts/governed-delete-scope-final，ESLint 与 UI 审计通过。测试范围变化通过会话存储模拟，并非四种真实账号的服务端权限验收。
+- 上一轮类型检查 .artifacts/governed-delete-response-types.log 已终态通过；本轮 .artifacts/governed-delete-scope-types.log 待终态。独立单条回调的完整快照、权限变化复验及专用守卫整合仍待继续。
+
+### 2026-10-12 共享表格确认后的权限复查
+
+- ArtTableQuery 在确认完成后、发送事件和调用业务回调前重新解析并检查按钮权限；撤销权限时终止操作并提示刷新重试。保留服务端授权要求。
+- 浏览器四项验证通过：确认期间撤销权限未执行回调，以及成功、失败、已提示失败的锁定与恢复。证据 `.artifacts/table-action-permission-final`。聚焦 ESLint、全局 UI 审计和主仓类型检查通过，类型日志 `.artifacts/table-action-permission-types.log`。
+- 自定义回调内部自行打开确认框的流程仍需在各自提交前复查权限；本轮共享组件验证不代表这些路径全部完成。
+
+### 2026-10-12 专用引用检查复用共享删除提交守卫
+
+- useRecordDeleteGuard 增加每次操作的专用引用检查入口；货物与客户地址的单条、批量删除共用同一提交流程，保留 MasterDataDeleteGuard 的 cargo/customer_address 专用运单引用规则。统一固定 ID、权限复查、租户快照、重复提交锁、确认文案、拒绝后复查及失败反馈；删去两页重复流程。
+- 共享守卫在服务端拒绝后复查引用前再次校验租户范围，避免切换范围后查询旧操作的引用。只读 MCP 核实客户地址真实表为 mdm_customer_address；未变更线上数据库。
+- 20 项浏览器验证通过，包括合同回归与两页取消、并发引用、零影响、范围变化、普通用户确认期间权限撤销。证据 `.artifacts/governed-delete-shared-permission-final`。权限撤销用例断言仅有引用查询，没有删除请求；租户变更仍为本机会话模拟，不能代替四种真实账号的数据库安全验收。
+- ESLint、Stylelint、UI 审计、复用审计、TMS 与主仓类型检查通过，完整单元套件 482 项通过。类型日志 `.artifacts/governed-delete-shared-types.log`、`.artifacts/governed-delete-shared-main-types.log`，单元日志 `.artifacts/governed-delete-shared-unit.log`。浏览器夹具缺个人中心/合同详情路由的警告仍存在；已查看合同并发引用回归截图。
+
+### 2026-10-12 自定义删除流程保留未删除的选择
+
+- ArtTableQuery 不再在自行确认的删除回调返回后自动清空选择：引用阻止、检查失败和取消都可能正常返回。此类流程成功后调用 refreshRemove，由刷新入口清理选择。共享表格自行确认的默认删除行为保留。
+- 24 项浏览器回归通过；合同批量引用阻止、检查失败、并发拒绝、零影响保留选择，货物与客户地址取消后保留选择。额外的合同批量成功验证确认 refreshRemove 清理选择。证据 `.artifacts/delete-selection-preserved`、`.artifacts/delete-selection-success`；已查看批量引用阻止截图，选择数量和勾选保留。聚焦 ESLint、UI 审计及主仓类型检查通过，类型日志 `.artifacts/delete-selection-types.log`。
+
+### 2026-10-12 司机与承运商专用删除流程统一
+
+- 两页单条与批量删除复用共享删除守卫，保留司机运单、承运商合同/报价/财务等专用引用规则。修正批量确认先于检查、守卫未就绪放行、单条异常吞掉及拒绝后未复查问题；统一权限和范围复查、ID 快照、锁定与刷新。
+- 四个删除接口启用 requireAffected 并由守卫承担失败提示，避免 boolean false/integer 0 被判为成功及重复 toast。只读 MCP 核实 RPC 返回值和 mdm_driver/mdm_carrier 表名；未修改线上数据库，调用点仅在上述两页。
+- 四页共 20 项浏览器交互验证通过，证据 `.artifacts/driver-carrier-guard-final`。包括司机、承运商取消、并发引用、零影响、范围变化和普通用户权限撤销；检查发生在确认前，被阻止时没有删除请求。ESLint、Stylelint、UI 审计、TMS 类型检查通过，类型日志 `.artifacts/driver-carrier-guard-types.log`。
+- 完整单元套件 482 项通过（`.artifacts/driver-carrier-guard-unit.log`），并发引用截图复验 4 项通过（`.artifacts/driver-carrier-guard-visual`）；已查看司机、承运商确认框和引用弹窗截图。布局未裁切，但专用引用状态仍显示英文 completed，夹具缺列表状态时出现 undefined，列为后续共享显示修正。个人中心/承运商详情路由警告仍存在；本轮不代表真实账号的服务端授权与引用导航全部验收。
+
+### 2026-10-12 引用状态文案及 TMS 空布尔显示
+
+- 专用 MasterDataDeleteGuard 元信息复用 formatReferenceStatus；无状态字典的引用显示已有中文状态映射、保留中文业务状态，未知技术值显示待核对。已配置字典的引用继续由 ArtDictDisplay 解析。
+- TMS 七个页面的 enabled/isDefault 字典绑定在 String 转换前保留空值，避免缺字段成为字符串 undefined/null；false 仍为 false，不会被空值兜底覆盖。其他模块同类直接转换仍需继续统一。
+- 4 项并发引用浏览器验证通过，断言状态为已完成、无 completed 和 undefined；已查看司机、承运商截图（`.artifacts/reference-status-display-final`）。两项既有状态单元测试、聚焦 ESLint、Stylelint、全局 UI 审计、主仓及 TMS 类型检查通过。类型日志 `.artifacts/reference-status-display-main-types.log`、`.artifacts/reference-status-display-tms-types.log`。
+
+### 2026-10-12 跨模块空布尔显示一致性
+
+- 系统管理、MDM、SCM、SMIS、VMS 的 17 个页面/组件在字典 String 转换前保留空值；覆盖 enabled、isDefault、processed、mrpEnabled、inventoryAccounting、reversal、otherIo、isSpecialEquipment、backflush。false 和 0 保持原值。保留已有显式空值判断的 BOM 结构实现；本轮没有修改布尔业务规则。
+- 六项实际移动类型页面/弹窗浏览器验证通过（`.artifacts/boolean-display-global-verified`）：真/假/空/缺字段、延迟字典、历史字典值、导出、重试和旧请求隔离。新增断言定位具体布尔列，测试字典接口按 value 查询过滤，避免夹具把其他值的首项冒充未知值。
+- 聚焦 ESLint、Stylelint、全局 UI/复用审计、主仓及 MDM/VMS/SCM/SMIS 类型检查通过，日志 `.artifacts/boolean-display-*-types.log`。额外单项渲染测试通过，已查看等待查询控件完成加载后的截图（`.artifacts/boolean-display-render-final`）；布尔文案正确且无技术空值。移动类型卡片仍未铺满底部，记录为后续布局修正。
+
+### 2026-10-12 移动类型高度问题复核
+
+- 复核上一条底部空白记录：独立组件夹具没有 AppLayout 提供的 `--art-full-height`，因此截图不足以证明业务页面布局缺陷。已为独立夹具补充测试容器高度，并新增真实 AppLayout 下的页面回归；没有据此修改业务页面高度样式。
+- 1440/1280 两种桌面宽度验证普通模式、专注模式、按钮退出与 Esc 退出：卡片底部留白不超过 17px，分页位于视口内，无页面横向溢出。已查看最终普通/专注截图；个人中心路由仍是夹具未注册的外壳警告，不代表正式菜单验证。
+- 字典模拟只处理该业务的按类型查询；其余请求交回隔离会话响应，避免把业务字典行交给全量字典加载。八项浏览器用例通过，证据 `.artifacts/movement-shell-layout-verified`；聚焦 ESLint、全局 UI 审计和主仓类型检查通过，类型日志 `.artifacts/movement-shell-layout-types.log`。本项仅证明已测页面与视口，不替代全模块布局验收。
+
+### 2026-10-12 出入库类型删除流程统一
+
+- 出入库类型单条与批量删除复用 useRecordDeleteGuard / MasterDataDeleteGuard：确认前检查反向类型引用，确认后复查权限和租户范围，服务端并发拒绝后重新检查。批量操作关闭表格提前确认；被阻止/取消保留勾选，成功刷新清理勾选。删除 RPC 的整数结果启用 requireAffected，零影响不显示成功；错误由共享守卫统一提示。
+- 引用元信息新增出入库类型中文分类和受 View 权限控制的导航；页面接收引用编号，定位搜索并清除方向筛选。Supabase MCP 只读核对了反向类型 RESTRICT 外键、删除 RPC 的整数返回/认证/按钮权限/租户范围校验、通用引用检查函数和正式菜单名称；没有执行线上修改。
+- 单条/批量 × 引用、失败、成功、并发、零影响、取消、范围变化、权限撤销共 16 项浏览器验证通过（`.artifacts/movement-delete-guard-final`），并已查看两张引用弹窗截图，关联跳转定位断言通过。模拟权限和范围变化不替代真实账号服务端权限验收。另八项现有字典、导出、布局、弹窗请求隔离用例通过（`.artifacts/movement-delete-existing-regression`）。
+- 聚焦格式/ESLint/Stylelint、全局 UI/复用审计、主仓与 MDM 类型检查通过；完整单元套件 485 项通过（`.artifacts/movement-delete-unit.log`），类型日志 `.artifacts/movement-delete-main-types.log` / `.artifacts/movement-delete-mdm-types.log`。全局扫描仍发现其他业务页面保留局部确认/删除流程，后续逐项核对，未宣告全项目删除流程全部统一。
+
+### 2026-10-12 业务类型删除提交与引用反馈统一
+
+- 业务类型单条/批量删除移除局部确认、忙状态和异常处理，复用共享 deleteRecords；在引用检查和确认后核对租户范围/权限。保留 API 的零、空和部分删除计数检查，成功刷新清理勾选，阻止/取消保留勾选。
+- 并发外键拒绝回归发现本地与全局引用窗口重复打开。responseHandle 增加 showReferenceFeedback 可选项，默认保持全局处理；业务类型删除显式 false，由本地守卫复查全部所选 ID 并展示一个窗口。未接管的默认全局反馈有独立浏览器断言，不改变其他调用方默认行为。
+- 最终 20 项浏览器验证通过（`.artifacts/business-type-shared-delete-final-all`）：既有引用/失败重试/取消/成功/零空部分计数/导航、单条批量并发、确认期权限和范围变化、默认全局反馈。已查看单条和批量并发截图；真实服务端账号授权仍需独立验收。本轮仅通过 MCP 只读核对现有业务类型删除 RLS，没有线上修改。早一轮冷启动首项下拉菜单未出现而超时（`.artifacts/business-type-shared-delete-verified`），暖态最终套件通过不代表该启动稳定性问题已解决。
+- 主仓/MDM 类型检查、聚焦 ESLint/Stylelint/格式、UI/复用审计通过，完整单元套件 485 项通过。日志 `.artifacts/business-type-shared-delete-{main,mdm}-types.log`、`.artifacts/business-type-shared-delete-unit.log`。单据类型的专用引用状态补充及其他页面仍需继续核对，未列为已完成。
+
+### 2026-10-12 单据类型删除一致性与计数核验
+
+- 单条/批量删除复用 useRecordDeleteGuard，保留业务类型引用状态补充；确认前检查、确认后权限/租户范围复查、并发拒绝后重新检查统一由共享流程处理。本地守卫接管引用反馈，避免重复窗口。
+- 删除 API 去重有效目标并核对 exact count；零、缺失或部分计数均不提示成功，成功文案移到数量核验后。部分删除检测不等于批量事务原子性；用户需刷新核对服务端实际结果。
+- 21 项浏览器验证通过，批量用真实两条记录，覆盖引用、状态读取失败、检查失败、成功、并发、零/缺失/部分计数、取消、权限撤销与租户变化。证据 .artifacts/document-delete-exact-count-fixed；已查看批量引用截图。早期测试数据构造错误导致运行失败，修复后重跑，未修改生产行为规避测试。
+- 格式/ESLint、MDM 类型检查、UI 审计、复用审计通过；485 项完整单元通过，日志 .artifacts/document-delete-unit.log。主仓类型检查会话 4523 已正常退出并通过。线上 MCP 仅只读核对删除 RLS：平台超级管理员或本租户且具 MdmDocumentType:Delete 权限；未执行线上变更，模拟权限用例不替代真实账号授权验收。
+
+### 2026-10-12 工位删除统一与权限撤销隔离验证
+
+- 工位移除局部确认/忙状态/异常流程，复用 useRecordDeleteGuard，确认后复查租户范围和权限；本地守卫接管并发引用反馈，失败/取消保留勾选。API 对有效 ID 去重，核验 exact count，零/缺失/部分计数不报成功，核验后才显示成功并刷新。
+- 13 项浏览器用例通过（.artifacts/workstation-delete-final-two-records），批量实际选择两条；覆盖检查失败重试/取消、成功、零/空/部分计数、并发、范围和权限变化，已查看单条/批量并发截图。最初权限测试撤销平台超级管理员，同时触发租户范围变更；修正为普通用户仅撤销 Delete 权限后独立验证，两种安全检查均保留。
+- MCP 只读确认 mdm_workstation 删除 RLS 为平台超级管理员或本租户加 MdmWorkstation:Delete，当前没有指向该表的外键，列扫描也未发现工位 ID 引用列。并发用例是模拟服务端拒绝响应，不能当作线上已有生产任务关联的证明；关联表的新增仍需同步服务端完整性规则和导航元信息。本轮没有线上变更。
+- 格式/ESLint、MDM 与主仓类型检查、UI/复用审计通过，完整单元 485 项通过，日志 .artifacts/workstation-delete-{main,mdm}-types.log 和 .artifacts/workstation-delete-unit.log。全项目其他局部删除流程仍待继续迁移和验证，未宣告全局完成。
+- 原有工位字典筛选/编辑与停用选项过滤回归通过（1 项，.artifacts/workstation-delete-dictionary-regression）。
+
+### 2026-10-12 BOM 删除提交守卫与专用引用规则
+
+- BOM 单条/批量删除接入 useRecordDeleteGuard，保留配件加工清单专用引用检查和 View 权限完整性检查。确认后统一复核权限/租户范围，服务端并发拒绝后重新检查；API 本地接管引用反馈，避免重复弹窗。守卫尚未挂载时明确反馈并阻止删除。
+- 保留 mdm_delete_bom 单条 void 返回与服务端未找到/非设计状态/引用拒绝语义；批量 RPC 对 ID 去重并核验返回整数数量，零/缺失/部分数量不显示成功。单条与批量的成功文案由页面核验完成后提示。
+- MCP 只读核对 mdm_delete_bom 与 mdm_delete_boms：认证、Delete 权限、当前读取租户范围、行锁、仅设计状态、清单引用拒绝；批量按排序后的不同 ID 调用单条函数，事务内处理。未改线上数据库，浏览器模拟用例不替代真实账号服务端授权验收。
+- 删除新增 17 项回归已通过，真实两条批量选择；引用检查在确认前，取消/阻止保留勾选，导航传递清单 ID/编号，权限撤销/租户变化不发删除，并发只显示一个引用窗口。已查看单条/批量引用截图。组合旧工作区回归共 28 项通过（.artifacts/bom-delete-final-verified）；原有离页断言与 ArtDialog 默认导航关闭行为不符，调整为弹窗保持关闭、旧响应不刷新、重开新表单为空；分组读取模拟补齐 exact count 总数响应。
+- 主仓与 MDM 类型、格式/ESLint、UI/复用审计通过，完整单元 485 项通过；日志 .artifacts/bom-delete-{main,mdm}-types.log、.artifacts/bom-delete-unit.log。BOM 分组删除等其余局部流程仍待继续处理，未宣告全项目完成。
+
+### 2026-10-12 BOM 分组删除与树节点操作统一
+
+- BOM 分组复用 useRecordDeleteGuard / MasterDataDeleteGuard，确认前检查下级分组和 BOM 引用，确认后复查权限与租户范围，并发拒绝后重新检查。删除 RPC 核验整数影响数量，零或缺失结果不提示成功，本地守卫统一处理引用反馈。
+- 树节点新增下级、编辑、删除统一收进一个 ArtButtonMore，避免隐藏按钮仍占宽度导致名称截断。引用导航区分分组与 BOM ID，选中目标分组并展开祖先节点；菜单点击不误触树节点选择。
+- MCP 只读核对 mdm_delete_bom_group_secure 的认证、ManageGroup 权限、租户范围、行锁、子分组/BOM 引用拒绝和整数返回；现有入向外键保持 RESTRICT。没有执行线上变更。
+- 最终 10 项分组浏览器用例通过（.artifacts/bom-group-delete-final），覆盖引用、检查失败、并发、成功、零/空返回、取消、权限与范围变化；另验证键盘打开菜单、新增/编辑事件和子分组定位。已查看 1280 宽度引用及定位截图，名称完整显示。既有 BOM 删除/工作区 28 项回归通过（.artifacts/bom-group-delete-existing-regression）。
+- 主仓与 MDM 最终类型检查通过（.artifacts/bom-group-delete-main-types-final.log、.artifacts/bom-group-delete-mdm-types-final.log）；完整单元 485 项通过（.artifacts/bom-group-delete-unit.log）。聚焦格式、ESLint、Stylelint、全局 UI/复用审计通过。供应商、物料、组件和工艺等其他分组局部删除流程仍需继续检查，本记录不表示全局优化完成。
+
+### 2026-10-12 其余主数据分组删除待改造清单
+
+重新读取当前源码确认以下流程仍未满足“引用检查先于确认”的要求，不能归入已完成项：
+
+| 当前入口 | 已确认问题 | 后续验收要求 |
+| --- | --- | --- |
+| purchase-master/supplier/index.vue / removeGroup | 直接 confirmDelete 后调用 deleteMasterGroup | 接入共享守卫，供应商及下级分组引用、取消、失败和并发复查 |
+| components/operational-master/index.vue / removeGroup、removeRow | 分组及主记录直接确认删除，共享页面影响多个业务入口 | 按当前业务动态配置权限和引用导航，覆盖每个使用该页面的业务入口 |
+| process-master/process-route/index.vue / removeGroup | 先 confirmAction，catch 吞掉所有异常 | 共享守卫接管失败反馈、引用检查和并发复查 |
+| engineering/component-type/index.vue / removeGroup、removeType | 确认文字说明引用限制，但没有确认前检查 | 行业分组、组件类型分别校验，展示下级及 BOM 关联记录 |
+| inventory-master/warehouse-definition/index.vue / removeGroup | 仅确认文字提示下级/仓库限制 | 确认前展示阻止引用，失败关闭删除提交并支持重试 |
+
+- 共同 API operational-master.ts / deleteMasterGroup 目前继承 writeOptions 并自行提示成功；迁移调用方时需同步核对 exact count、零影响及反馈所有权，避免页面和全局重复提示。仓库和组件行业分组使用独立 API，也需单独核对服务端返回契约。
+- 本次为源码证据清单，没有修改上述业务流程或线上数据库；这些项目仍处于待改造状态，不能用其他页面的通过结果替代验证。
+
+### 2026-10-12 供应商分组删除改造中
+
+- 供应商分组已接入共享引用守卫，确认后复查 ManageGroup 权限和租户范围；并发拒绝由本地守卫重新检查。共享 deleteMasterGroup 增加反馈选项，核验 responseHandle 返回 total 为 1 后才提示成功，保留未迁移调用方默认反馈。
+- 关联导航按守卫实际传递的 recordNo 搜索供应商，清除分类筛选；分组引用按 ID 选中，公共分组树展开目标祖先。现有分组布局/管理动作及供应商导出 11 项浏览器回归通过（.artifacts/supplier-group-existing-regression），不能替代新增删除流程专用验收。
+- MCP 只读发现当前 supplier_group_delete 策略限定认证用户自身租户及 ManageGroup；平台跨租户删除契约仍需线上策略核对修正。未执行数据库修改，备份前置要求仍有效。
+- 聚焦 ESLint 已通过。首次 MDM 类型检查发现错误读取 QueryResult.count，已改为 total 并重跑；最终类型检查仍在运行，供应商分组专用删除回归、截图复核及完整验证门禁待补充。本项尚未完成。
+- 后续主仓与 MDM 最终类型检查均已通过（.artifacts/supplier-group-delete-{main,mdm}-types-final.log）；全局 UI 和复用审计通过。新增六项专用浏览器验证，首轮请求模拟未匹配引用 RPC 分页参数导致失败，修正匹配后重跑至 .artifacts/supplier-group-delete-specific-final。当前已通过引用阻止及检查失败两项，供应商编号导航断言通过；已查看引用弹窗截图，编号、启用状态和授权跳转入口清晰。其余用例仍在运行，不计为已通过；权限/范围变更、下级分组定位等专用覆盖仍待补充。
+- 最终七项专用回归通过（.artifacts/supplier-group-delete-final）：供应商引用及编号导航、检查失败恢复后再次点击重新校验、并发拒绝只打开一个窗口、成功、零/缺失计数、取消不提交。确认按钮定位修正为实际“删除”，重试断言按共享守卫“关联已解除，请再次点击删除”行为校验，未为测试修改生产行为。完整单元 485 项通过（.artifacts/supplier-group-delete-unit.log），聚焦 ESLint/格式通过。权限/范围变更、子分组定位及平台跨租户服务端策略仍待专用验收，整项和全局任务保持未完成。
+- 下级分组引用新增后八项回归通过（.artifacts/supplier-group-child-verified）；另单独验证父节点预先折叠、下级不可见，再经引用导航展开祖先并选中目标（.artifacts/supplier-group-child-collapsed-verified）。已查看 1280 宽度定位截图：导航正确，但公共分组树三个行内管理按钮挤压名称，子节点名称严重截断。需将公共树操作合并成一个 ArtButtonMore，并同步所有调用方的浏览器交互用例；此视觉缺陷尚未修复。聚焦测试 ESLint 通过。
+
+### 2026-10-12 公共分组树操作菜单统一
+
+- MasterGroupPanel 的新增下级、编辑、删除合并为一个 ArtButtonMore，菜单沿用当前业务 ManageGroup 权限，删除只出现在菜单内；点击菜单不触发树节点选择。供应商删除回归和公共树管理动作回归同步使用菜单交互，只读状态断言没有更多按钮。
+- 组合浏览器回归最终 17 项通过（.artifacts/master-group-more-verified），包含供应商八项删除流程及折叠分组定位。类型检查会话 13807 仍在运行，后续须读取终态。
+- 后续主仓、MDM、TMS 类型检查均已正常退出通过（.artifacts/master-group-more-types.log、.artifacts/master-group-more-{mdm,tms}-types.log）。扫描其余浏览器用例未发现仍点击公共树旧行内管理按钮的入口。
+
+### 2026-10-12 工艺路线分组删除改造中
+
+- 分组删除已从局部 confirmAction 和吞异常改为共享引用守卫；确认后复查 ManageGroup/租户范围，并发拒绝重新检查。本地反馈与 API 全局反馈分离，删除数量核验后才提示成功。分组和工艺路线引用添加授权导航，按 ID 选择分组或按编号搜索路线并清除旧筛选。
+- 聚焦格式/ESLint 通过；MDM 类型检查已启动，专用浏览器删除/定位和实际截图尚待验证。本条不表示工艺路线主记录删除已迁移，也不表示该分组改造完成。没有线上数据库修改。
+- MDM 类型检查后续正常退出通过（.artifacts/process-route-group-types.log）。供应商测试整理为 mdm-master-group-delete.spec.ts 的两业务参数化用例，避免复制测试；组合 16 项回归通过（.artifacts/mdm-master-group-delete-verified），包含路线引用编号搜索及清除旧筛选、预先折叠的下级分组展开定位、检查失败后重试再点击、并发单窗口、成功、零/缺失计数和取消。已查看路线引用窗口截图，分类、状态、编号和授权导航清晰。截图数据为隔离测试模拟，非生产数据。聚焦格式/ESLint 和全局 UI 审计通过；权限/租户变化及主记录删除仍待处理。
+- 增补两类分组在确认期间撤销 ManageGroup 权限和改变范围上下文的验证，最终 20 项回归通过（.artifacts/master-group-delete-security）：确认后显示具体刷新重试反馈，事件仅有引用检查，没有删除请求。权限用例保持普通用户身份不变，只移除按钮权限；范围用例改变隔离浏览器的范围存储以验证提交保护，不代表普通用户获得跨租户能力，不能替代真实账号服务端 RLS 验收。聚焦测试格式与 ESLint 通过。供应商平台跨租户线上策略及其余主数据删除改造仍未完成。
+
+### 2026-10-12 共享经营主数据分组删除改造中
+
+- 客户、项目、工序共享页面的分组删除接入 useRecordDeleteGuard，按当前配置检查 ManageGroup 权限，并复查范围；本地处理反馈，影响数量核验后才显示成功。引用导航按当前入口及 View 权限解析，分组按 ID 定位、主记录按编号搜索并清除启用筛选。主记录 removeRow 仍待迁移。
+- MDM 类型检查通过（.artifacts/operational-group-delete-types.log），聚焦格式/ESLint 通过。浏览器参数化回归扩展为五类业务共 50 项；工序测试路径最初误写 operation-set，核对当前目录与配置后改为 operation，主动停止旧运行后启动最终运行（.artifacts/operational-groups-delete-final）。最终进程仍在运行，尚不计为通过，后续须读取终态及截图。
+- 项目引用导航回归暴露动态解析缺少 routeNames 候选名单，守卫因此隐藏导航按钮；已补齐客户/项目/工序候选路由并主动停止旧运行，重跑至 .artifacts/operational-groups-delete-navigation-final，后续须读取该运行终态。不是通过修改断言规避导航问题。
+- 主记录删除只读数据库核对：客户存在地址 CASCADE、父客户及运单关系 SET NULL，普通外键限制检查不能覆盖这些关系。TMS 客户页面已有专用依赖检查与清理候选处理，后续应提取主仓共享规则供 MDM/TMS 复用；不得直接把 generic guard 当作完整客户删除保护。项目、工序、活动公式、控制码存在 RESTRICT/NO ACTION 业务引用。共享页面批量删除目前直接调用 deleteOperationalMasters，也仍需迁移并核验 exact count。没有线上数据库修改。
+- 导航修复后项目十项删除/定位/权限/范围回归已通过；客户引用及子分组导航也通过，完整五类 50 项运行仍未终止，后续须读取会话 95880。已查看 1280 宽度项目子分组定位截图：祖先展开、目标选中、名称完整；截图使用隔离测试模拟名称，非生产数据。新增导航字段的 MDM 类型检查会话 18838 仍在运行。
+- MCP 只读进一步确认 tms_delete_customer_secure 和 assert_customer_delete_scope 均要求 TmsCustomer:Delete，普通用户按自身租户校验。不能在 MDM 入口直接调用这些 RPC 来声称已经支持 MdmSalesCustomer:Delete；共享化需核对服务端授权，并修复当前删除 RPC 平台选定租户读取语义和 CASCADE/SET NULL 关联保护。线上修改继续受备份前置要求约束。
+- 最终五类分组 50 项浏览器回归全部通过（.artifacts/operational-groups-delete-navigation-final），会话 95880 正常退出 0；此前动态关联按钮缺失已由真实导航断言验证修复。主记录删除和客户专用服务端授权仍不计为完成。
+- 导航补充后的 MDM 类型检查正常退出通过（.artifacts/operational-group-navigation-types.log）。
+
+### 2026-10-12 经营主数据删除 API 数量核验
+
+- deleteOperationalMasters 对有效目标去重，拒绝空选择；真实删除总数与去重目标数量一致后才显示成功。零、缺失、部分计数均失败；反馈选项支持后续由页面守卫统一处理，默认保留现有调用方反馈。
+- 浏览器加载实际 API 后模拟 exact count 验证：两个不同目标加重复 ID 仅提交两个 ID，零/空/部分计数无成功提示，空选择不发网络请求。专用回归通过（.artifacts/operational-delete-count-verified），MDM 类型、格式/ESLint 通过。完整单元正在运行（.artifacts/operational-delete-count-unit.log，会话 45828），后续须读取终态。
+- 部分计数检测不表示批量事务原子性；需刷新核对服务端实际结果。主记录页面的单条/批量确认前引用检查和客户特殊关联保护仍待改造，不能以 API 测试代替完整业务验收。
+
+### 2026-10-12 共享主记录删除守卫改造中
+
+- 共享经营主数据页面单条/批量统一 deleteRecords，引用检查在确认前；批量关闭表格提前确认，捕获当前业务配置与资源名称/编号后提交，确认后复查 Delete 权限和范围，并发拒绝重新检查。API 反馈关闭，由页面数量核验成功后提示并清理勾选；忙状态禁用删除菜单/批量动作。表名读取复用 API 中现有资源定义，未在页面复制表映射。
+- 删除计数改造的完整单元进程正常退出通过，证据 .artifacts/operational-delete-count-unit.log。本次页面聚焦格式/ESLint 已通过，MDM 类型检查会话 18996 和 UI/复用审计正在运行；主记录专用浏览器单条/批量回归仍待添加。
+- 客户 CASCADE/SET NULL 等专用关联保护尚未补齐，普通外键守卫只是当前改造阶段；不能将客户或所有主记录删除宣布完成。线上授权修复仍受已说明的备份前置要求约束。
+- 页面 MDM 类型、UI/复用审计均已正常退出通过（.artifacts/operational-record-guard-types.log、.artifacts/operational-record-guard-{ui,reuse}.log）。新增项目单条和真实两条批量专用回归，单条五项首轮通过；批量测试误定位“删除”而实际为“批量删除”，修正测试并主动停止旧运行后重跑 .artifacts/operational-record-delete-final，会话 37638 仍在运行。已查看单条引用弹窗截图，BOM 编号、状态和阻止删除说明清楚；本夹具未注册 BOM 导航路由，不能作为导航权限验收。专用测试格式/ESLint 通过。
+- 最终项目单条/真实两条批量 10 项专用回归全部通过（.artifacts/operational-record-delete-final），阻止、失败和取消保留两条勾选，并发后只打开一个引用窗口。其余共享主记录业务、授权导航、权限/范围变化和客户专用关联保护仍待专用验证。
+- 项目专用回归扩展至 19 项全部通过（.artifacts/operational-record-delete-security）：单条/两条批量在确认期间撤销 Delete 权限或改变范围上下文均不提交；零/缺失计数及批量部分计数只提示一次失败、没有成功提示并重新检查引用，批量失败保留两条勾选。范围模拟验证前端提交保护，不替代真实账号服务端租户授权；部分计数模拟也不证明批量原子性。聚焦测试格式/ESLint 通过。其余共享业务与授权关联导航仍待验证，客户 CASCADE/SET NULL 专用保护尚未完成。
+- 同一浏览器回归参数化扩展至项目、工序集、活动公式、工序控制码、工位配置，共 95 项，夹具补充对应入口和 Delete 权限；断言各业务实际表名、权限撤销和成功文案。核对工位正式标题后修正文案并主动停止旧运行，最终运行 .artifacts/operational-record-delete-domains-final（会话 83698）仍在执行，不能计为通过。测试格式/ESLint 通过。各业务引用响应目前模拟同一个 BOM 阻止记录，验证通用守卫流程，不是各业务线上真实引用类型的证明；仍需真实引用元信息与授权导航验收。客户特殊关联保护保持未完成。
+- 已查看 1280 宽度供应商父子分组定位截图（.artifacts/master-group-more-verified）：原先被三个按钮挤压的名称和编码现完整显示，目标高亮及父节点展开保留。五类业务布局和四组明暗主题/边框阴影/键盘/管理动作回归通过，供应商删除流程继续逐项验证；主仓类型检查仍在运行，不计为通过。聚焦 ESLint、格式及全局 UI 审计通过。本修改不替代其他页面尚未完成的删除守卫和权限/租户专用验收。
+
+### 2026-10-12 图文统一规则复核
+
+- professional-ui-quality 的强制图文规则与 art-supabase-pro-conventions 引用已存在：垂直中心对齐、常规 8px/小控件 6px 间距、14px 文字配 16px 图标；自定义组复用 art-icon-label，Element Plus 控件使用共享规则。
+- 本轮资源分类、上传来源菜单及失败提示共 9 项浏览器回归通过，覆盖明暗主题、两种框体模式与移动宽度；实际中心差、间距和图文尺寸比例断言通过。查看资源分类与来源菜单截图，证据 .artifacts/icon-label-current-verified。全局 UI audit 检查 673 主仓源文件与 1397 模块 UI 文件通过。此结果不等于所有独立业务布局已经逐页视觉验收。
+- 前轮五类主记录删除回归已完成，95 项通过，证据 .artifacts/operational-record-delete-domains-final；其引用夹具为模拟数据，不能据此宣称生产引用导航或客户级联保护已完成。
+
+### 2026-10-12 生产主记录引用分类与级联风险核查
+
+- 删除引用分类补齐工艺路线工序、工作中心活动配置、工作中心和生产工序任务的中文名称，避免向用户暴露表名或将不同业务统一写作 BOM。
+- operational-record-delete 夹具按真实外键关系分别模拟项目/BOM、工序/路线工序、活动公式/工作中心活动、控制码/生产工序任务；工位未发现真实入向外键，明确采用 synthetic_reference 测试未知分类安全降级，不声称其为生产关联。
+- 本轮 10 项 single/bulk referenced 浏览器验证通过，检查先校验、无确认框、无 DELETE 请求，以及引用编号和分类；两项引用元数据单元测试通过，ESLint/Prettier 通过。已查看活动公式和工序控制码截图，证据 .artifacts/operational-reference-classification。真实父级定位和授权导航仍需补齐。
+- Supabase MCP 只读核查 mdm_process_route：BOM、ESOP 绑定为 RESTRICT；路线序列、路线工序为 CASCADE。现有路线本地删除会级联，因此后续改造必须覆盖级联子记录，不能仅把确认框换成通用 RESTRICT 检查。未执行线上数据库变更。
+
+### 2026-10-12 工艺路线根记录删除守卫
+
+- 工艺路线根记录接入 useRecordDeleteGuard / MasterDataDeleteGuard：引用检查先于确认，权限/租户变化及并发引用拒绝沿用共享阻断机制；移除吞错的本地确认删除流程，More 删除忙碌时禁用。
+- MDM API 增加分页检查路线序列与路线工序，以补足通用 RPC 只检查 RESTRICT/NO ACTION 的遗漏；失败必须阻断。删除 API 校验精确影响数为 1，调用方统一反馈，避免重复提示。
+- MDM 类型检查、ESLint、Prettier、全局 UI audit 和复用审计通过。三项浏览器验证通过：有序列/工序时显示中文分类且不提交；子记录检查失败阻断；空路线检查后删除一次成功。截图已查看，最终证据 .artifacts/process-route-delete-owned-verified。
+- 第一轮测试误用桌面 hover 菜单的 click 和不存在的“确定”按钮；第二轮夹具未暴露 Content-Range 导致精确计数拒绝，修正为真实 Data API 的可读计数响应后通过，没有弱化影响数校验。
+- 此改造提供前端引用保护，但服务器外键仍为 CASCADE；检查后并发新增子记录的竞态仍需数据库删除边界拒绝。线上变更需先满足本地 Supabase skill 的可恢复备份门槛，未执行线上写入。引用授权导航和步骤/序列自身删除仍待完成。
+
+### 2026-10-12 工艺路线子记录授权定位
+
+- 根记录删除守卫中的路线序列、工序提供“查看所属路线”，只授予 MdmProcessRoute:View 用户。页面通过 routeId 精确读取父路线并按编码清空分组/状态筛选，避免把子记录编号误作为父路线搜索；异步查询检查租户上下文与请求版本。
+- 路线查询和分组列表监听分离，避免分组加载反复触发父路线定位。只读 API 保留 RLS，不绕过查看权限。单条读取无记录或失败时提供反馈。
+- 4 项浏览器用例通过：两种子配置显示关联导航并实际筛选所属路线；撤销 View 后无导航；检查失败阻断；空路线删除。最终证据 .artifacts/process-route-delete-navigation-final，已查看含导航截图；ESLint 和 UI audit 通过。
+- 第一轮 no-view 夹具遗漏子记录响应导致误走确认，已修正；首次 hover 展开偶发未出现，最终用例通过真实键盘 Enter 打开，不能宣称 hover 偶发问题已修复。MDM 最终类型检查会话 43011 待终态核验。数据库 CASCADE 并发保护仍未完成。
+
+- 上述 MDM 最终类型检查会话 43011 已终态通过（exit 0）。
+
+### 2026-10-12 路线异步定位权限复核
+
+- 在所属路线单条查询返回后再次检查 MdmProcessRoute:View，权限已撤销时阻止应用旧路线编码并提示刷新。保留租户上下文及请求版本检查。
+- 新增查询途中撤销 View 的浏览器用例；最终 5 项全部通过，证据 .artifacts/process-route-navigation-permission-final。第一次夹具误按 object Accept 判断 maybeSingle，但客户端实际使用 JSON 数组响应；改为精确识别 GET `id=eq.<id>` 并实际撤销权限后通过。
+- MDM 类型检查会话 66700 已终态通过，ESLint、Prettier、UI audit 通过。More 首次 hover 偶发未展开仍未修复，不能由本组键盘打开的通过结果推导为完成。
+
+### 2026-10-12 More 首次悬停复现
+
+- 新增独立 hover 场景（process-route-delete.spec.ts --grep hover），断言桌面 fine pointer / hover 能力及按钮 aria-expanded，不通过键盘回退掩盖失败。
+- .artifacts/process-route-hover-first 与 .artifacts/process-route-hover-events 均复现失败：鼠标命中 More 图标，原生 pointerover/mouseover/mouseenter 已触发，按钮 :hover 为 true，但 10 秒后 aria-expanded 仍 false。诊断记录与截图/trace 已保存；这排除了单纯指针没有命中，但尚未证明 Element Plus 事件传递或组件重建的具体原因。
+- 新增悬停用例目前失败，不能把整份测试文件称为通过。原 5 项删除/权限/键盘导航通过结果仍见 process-route-navigation-permission-final。本轮仅增加可重复诊断证据，不宣称修复。
