@@ -2773,3 +2773,22 @@ TMS 货品物料与 WMS 装配候选已复用主仓 loadAllDocumentPages，500�
 - UI 审计新增 ArtSvgIcon 模板 class 内 mr/ml 外边距检查，补足原有只检查 CSS 图标 margin 的遗漏。失败结果页两条提示复用共享图文布局，保持块级分行，危险图标使用主题 danger token。
 - 全局审计检查 673 主仓与 1396 模块 UI 文件通过；聚焦 ESLint 与 diff 检查通过。真实浏览器失败提示分行/中心/8px 间距及资源分类明暗、1440/390px 五项回归通过，证据 .artifacts/icon-alignment-audit-final，结果页截图已查看。初轮夹具缺少 ripple 注册警告已通过注册真实全局指令消除。
 - 检测器覆盖直接模板图标左右 margin，并不能替代对所有 JSX、动态样式和复杂图文结构的逐项视觉检查。
+
+### 2026-10-11 运输合同删除检查统一
+
+- 合同单条和批量删除接入 useRecordDeleteGuard/MasterDataDeleteGuard，批量关闭 ArtTableQuery 的提前确认，改为检查引用后由共享守卫确认。删除权限使用 TmsContract:Delete，确认后再次检查权限和租户范围，并发拒绝重新读取引用。移除原有吞掉所有异常的 catch。
+- 两个既有删除 RPC 的错误提示交由共享守卫负责，防止通用引用错误 toast 与详细引用弹窗同时出现；全仓搜索确认两个调用点均在守卫内。只读 MCP 确认 public.tms_contract 存在，无线上数据库修改。
+- 单条/批量的引用、检查失败、无引用、并发拒绝共八项浏览器用例通过；错误提示收口后两项并发复验通过，最终截图已查看，证据 .artifacts/contract-delete-guard-final 与 .artifacts/contract-delete-concurrent-final。ESLint、UI 审计通过。TMS 类型检查日志 .artifacts/contract-delete-tms-types.log 尚待终态核验。
+- 测试夹具缺少个人中心/合同详情路由，有路由警告，未验证线上授权引用跳转；服务端历史关联及零影响删除仍需单独核验，不能宣称全局删除改造完成。
+
+### 2026-10-12 合同零影响删除核验
+
+- 只读 MCP 核验合同单条 RPC 返回 boolean，记录不存在时返回 false；批量 RPC 返回实际删除数量。共享 responseHandle 在显式 requireAffected 模式下新增布尔影响判定，false 与数值 0 同样阻止成功提示；两个合同删除接口启用此门槛，错误提示要求刷新列表重试。未修改线上函数。
+- 上一轮 TMS 类型检查发现引用对象仍使用可空 row.id，已改为使用校验后的局部 id。TMS 类型检查最终通过，日志 .artifacts/contract-delete-zero-types.log；482 项主仓单测通过，日志 .artifacts/contract-delete-zero-unit.log。主仓类型检查 .artifacts/contract-delete-zero-main-types.log 尚待终态。
+- 单条和批量各五种场景（引用、检查失败、无引用、并发拒绝、零影响）共十项浏览器用例通过，零影响不显示成功并重新检查引用；截图已查看，证据 .artifacts/contract-delete-zero-final。聚焦 ESLint 通过。夹具仍有非目标路由警告，线上授权导航、部分删除反馈和其他页面删除仍待继续核验。
+
+### 2026-10-12 专用引用检查的批量确认顺序
+
+- 客户地址与货物批量删除原先先由表格确认，再在回调中检查专用引用；现在关闭提前确认，保留 get_governed_delete_dependency_details 专用检查，在检查通过后才确认。ArtTableQuery 对自定义动作中的 cancel/close 返回正常结束，不再误报操作失败。
+- 两页真实浏览器用例验证先检查、后确认，取消不发送删除且无错误提示，证据 .artifacts/governed-bulk-order。聚焦 ESLint、UI 审计通过，Stylelint 已执行。上一轮主仓类型检查已终态通过 .artifacts/contract-delete-zero-main-types.log；本轮 TMS 类型日志 .artifacts/governed-bulk-order-types.log 待终态。
+- 两页单条删除仍有旧 catch 和缺少并发重新检查问题，专用引用规则与通用守卫完整合并尚未完成；不能据本轮两项顺序验证宣称这两页全部删除场景或全局改造完成。
