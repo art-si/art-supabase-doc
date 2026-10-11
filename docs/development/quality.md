@@ -2662,3 +2662,114 @@ TMS 货品物料与 WMS 装配候选已复用主仓 loadAllDocumentPages，500�
 - voucher-save-result.spec.ts 扩展正常提交、提交接口失败、归集响应前外部撤权，测试名称调整为凭证保存与提交，桌面/手机新增6项通过（44.7秒）。正常一次保存/归集/submit转换并关闭；转换失败保留草稿及提交待核实警告；归集请求已发出后撤销全部业务权限，转换请求为零，草稿禁用且部分成功警告保留。
 - 四张失败截图已查看，桌面警告和分录可见；手机提交失败场景因点击位置停留表格下部、需滚动查看上部警告，消息可能遮挡标题，不作为完整移动视觉验收。此撤权清空全部权限，尚未覆盖仅撤Submit而保留Edit的细分场景；归集为空、转换使用模拟响应，不证明服务器状态、租户或真实提交持久化。
 - 格式、ESLint、diff及快照检查通过（7ffe229734cd）。本轮仅测试修改，未重复类型/全单测。证据 .artifacts/voucher-submit-browser.log，截图voucher-submit-20261007。自建服务已结束，无线上写入；转换空响应、非空归集、实际编辑及全项目其他优化仍待推进，全面优化未完成。
+
+### 2026-10-11 基于现有 skills 与新增优化重新建立质量基线
+
+- 重新读取当前AGENTS与impeccable项目适配器，按professional-ui-quality主标准结合audit/harden/polish方法进行检查。新增art-crud-page-standard已定位，用于后续标准CRUD改造；不使用上游代理/评分/重设计流程替代本项目规则。
+- 当前全仓ESLint、Stylelint与主仓类型终态通过。UI审计671主仓/1391模块UI文件通过；复用审计2019源码通过；权限审计341菜单/2126按钮/1186源码通过；依赖审计1373源码通过。以上为源代码规则证据，不证明所有运行页面、线上RPC权限、性能与视觉质量。
+- icons:check发现生成资产过期。运行仓库icons:generate后check通过543图标；差异只补入ri:money-dollar-circle-line，未手改SVG或引入新图标体系，diff检查通过。没有页面行为重设计。
+- 命名扫描中的App.vue和useXxx.ts属于既有Vue/组合函数约定，不能仅因大小写机械重命名。图表deep watch与动画will-change也必须结合实际数据/生命周期/渲染验证；已查看Tooltip仅在过渡active状态应用will-change，不将其误报为常驻性能问题。
+- 下一步按跨模块共享控件、CRUD/删除与选项异步恢复、写入结果与权限租户边界、真实长内容/空错/主题窄屏、图表/列表性能与产物预算推进。暂停前状态转换空响应防护仍需浏览器和API改动门禁；已有财务局部通过不能代替全项目完成。保留当前并发改动，无线上写入。
+- 日志 .artifacts/current-quality-lint.log、current-quality-stylelint.log、current-quality-types.log、current-quality-ui-audit.log、current-quality-reuse-audit.log、current-quality-permissions-audit.log、current-quality-dependencies-audit.log、current-quality-icons-check.log（原失败）、current-quality-icons-generate.log、current-quality-icons-recheck.log。尚无本次完整运行时/全主题浏览器证据，不提供全项目视觉评分。
+
+### 2026-10-11 共享表格操作、附件来源与引用检查
+
+- 按用户最终要求撤回新增滚动条尺寸样式；保留 ArtTable 的 scrollbarAlwaysOn=false，并清理业务显式常驻显示。浏览器确认 Element Plus 表格、普通下拉和树形下拉使用原始 6px 条，横向拖动有效。未修改原有菜单和原生滚动条样式。
+- 普通模式卡片底部空隙来自隐藏数据选择器仍占据 flex gap。ArtDataSelect 新增 showTrigger，四处隐藏触发器迁移为不占布局空间的共享方式；真实发货通知单组件在真实 AppLayout 中，卡片底部保持 16px 页面留白。
+- 嵌套操作栏的默认插槽可能返回单个 VNode，之前未识别其中已有的 ArtButtonMore。共享识别补全，已有 More 与自动行命令合并；具备对应 More 删除命令时隐藏重复直接删除按钮，原权限和回调保持。操作列根据实际按钮内容、单元格留白和原始滚动条尺寸测量，浏览器验证三按钮不遮挡；承运商报价的“批量操作”改为“批量删除”，单行显示“删除”。
+- 装卸地址使用 rich-options 样式出口，避免通用 select 单行高度规则覆盖；标题、联系人与一行地址在约 72px 内显示，长地址保留完整 title。
+- ArtUploadFile 恢复一个连体附件控件：主按钮上传本地文件，右侧箭头打开资源库入口；保留拖放、粘贴、上传生命周期、文件数/类型/租户校验。浅色/深色、边框/阴影四种浏览器状态通过，截图检查修正过箭头与主按钮之间旧 width 属性造成的空隙。新增相邻边界断言，避免再拆成两个视觉按钮。
+- useRecordDeleteGuard 增加批量入口，单条复用同一流程；检查引用后确认，删除前复核权限和租户范围，服务端拒绝后重新检查引用。客户报价和承运商报价单条/批量均迁移；API错误提示交给引用流程，零影响批量响应不得显示成功。指定项目 MCP 只读确认两个实际表名和 RLS；通用引用 RPC 支持这两个表，目前没有指向它们的阻止删除外键，也没有命名为 customer_price/carrier_price/quote_id 的引用字段。模拟引用只用于验证界面和失败流程，不能据此声称线上存在相同引用，未完成任意 JSON 软引用审计。无线上写入。
+- 真实组件加模拟 RPC 的浏览器验证：布局/下拉/嵌套 More 三项通过；附件主题四项通过；承运商报价有引用、检查失败、无引用、并发新增引用四项通过。引用运单编号可见，有引用与检查失败均无删除请求，无引用在确认后才发请求，并发拒绝后再次展示引用。此证据不证明线上租户/权限与真实持久化，导航还需各业务路由实测。
+- 当前全单测 482 项通过，UI审计和复用审计通过；Stylelint终态通过。主仓类型前轮终态通过，最新 API/夹具改动的终态仍在核验。全仓 ESLint首次发现11处格式问题，已格式修正并聚焦检查通过，尚不能将该轮全仓失败日志标为成功。证据 .artifacts/ui-shared-unit.log、ui-shared-stylelint-final.log、ui-shared-typecheck-final.log；浏览器目录 ui-shared-final-regression、ui-shared-regression、price-delete-guard-final、ui-delete-upload-final。
+- 全局扫描另发现普通业务删除、未保存明细移除、共享工作区间接防护等混合旧模式，尚未全部迁移；没有把未保存明细操作机械变成业务删除。其他模块、全尺寸/全主题与线上边界、凭证转换空响应等继续推进，全面优化未完成。
+
+### 2026-10-11 行内图标与文字统一
+
+- 根据用户提供的资源分类和 More 菜单参考，更新 professional-ui-quality 的强制规则，前端 conventions 引用同一规则：图文作为 flex 组垂直居中，常规间距 8px、小控件 6px，默认 14px 文字配约 16px 图标；独立图标按钮、标题和指标图标保留自身视觉层级。
+- 公共规则覆盖按钮、下拉菜单、分段选项、页签、单选/复选按钮、链接、标签及 art-icon-label。资源选择器去掉单独的 17px 图标与 mr-1；状态分段选项统一间距。AST 扫描后迁移 46 个文件中的简单行内图文组合，并移除 WMS/MDM 等六个文件内叠加间距的图标 margin。保留多行摘要、指标和装饰图标的布局责任。
+- ui:audit 增加控件内图标独立左右 margin 检测；主 UI skill 与 conventions 均通过 skill-creator 校验。技能修改后重新生成项目快照。
+- 真实 ArtResourcePanel、ElButton（含 small/disabled）、ElLink、ElTag、ElRadioButton 以及 ArtUploadFile 的隔离浏览器检查覆盖中心差不超过 0.5px、常规/紧凑间距、资源分类图标字号比例、图标实际 SVG 内容及分类选中状态；附件覆盖明暗主题和边框/阴影模式。业务网络使用模拟数据，此验证不代表已经逐页打开所有业务页面或验证线上权限。截图与日志仅保存在 .artifacts/icon-label-*。
+- 最终 8 项浏览器检查通过（icon-label-complete.log），482 项单测通过（icon-label-unit.log）；全仓 ESLint、类型检查、Stylelint、UI 审计与复用审计通过，最终新增夹具和审计脚本另通过聚焦 ESLint。资源分类明暗主题/桌面窄屏及图文控件截图已人工查看。
+
+### 2026-10-11 VMS 供应厂商删除与真实引用排查
+
+- VMS 供应厂商单条、批量删除接入 useRecordDeleteGuard / MasterDataDeleteGuard，引用检查先于确认；行内仅保留 More 中的删除，操作间距使用 BusinessTableRowActions，删除旧局部样式。RPC 返回错误或删除数量为零时抛出失败，重新检查引用，不刷新为成功状态。
+- 只读核验 mdm_supplier 存在采购、应付、物料和设备等 RESTRICT / NO ACTION 外键，通用引用 RPC 可检查这些记录。vms_delete_vehicle_suppliers_secure 已检查认证租户、目标存在性和逐条 Supplier:Delete 权限；此处没有修改线上函数。模拟采购引用用于浏览器界面验证，不证明完整线上导航和权限。
+- 单条、批量 × 无引用、有引用、检查失败六项浏览器检查通过；单条、批量删除零条两项补测通过，断言无成功提示且再次发起引用检查。六张流程截图已查看。日志 .artifacts/supplier-delete-browser.log、supplier-delete-zero.log；聚焦 ESLint、Stylelint、UI/复用审计及 VMS 模块类型检查通过；482 项单测通过。
+- 剩余真实保护缺口：通用 RPC 只检查 RESTRICT / NO ACTION。供应厂商被车辆零部件使用、零部件资料引用的外键为 SET NULL，银行和联系人为 CASCADE；保险公司也有 SET NULL 引用。单独查询 mdm_part_category 确认子类别自引用为 CASCADE，零部件资料和使用记录引用为 SET NULL；首次多语句结果只展示最后一条查询，不能用其未显示的外键结果判断没有引用，已纠正该判断。不能将这些流程标为全部保护完成。线上约束和引用 RPC 的补齐仍受本地 Supabase skill 的可恢复备份要求限制，本轮只读核验和代码侧改造，无线上写入。
+
+### 2026-10-11 VMS 类别树异步恢复
+
+- 类别树复用 VueUse useAsyncState 的最新请求状态管理，取消前次请求，卸载时取消防抖与网络请求；租户范围变化清空旧树与当前选中类别，再读取新范围。此处没有修改删除流程，类别树和列表的旧删除确认仍待迁移并补齐级联及 SET NULL 引用保护。
+- 加载失败使用共享 ArtAsyncState 展示中文说明与重试。Supabase 与 Java 查询提供相同的取消、错误反馈选项，树组件关闭查询层错误 toast，由重试区域统一反馈；其他调用者保留原有默认反馈。
+- 两项真实组件浏览器检查通过：旧搜索请求取消、晚返回不覆盖新结果、失败重试、卸载后没有尾随防抖请求；额外断言无重复错误 toast。已查看最终失败/重试及结果截图。网络使用模拟数据，不代表线上权限或所有租户用例已验证。证据 .artifacts/category-tree-final-browser.log 及 category-tree-final 截图目录。聚焦 ESLint、UI 审计、Stylelint、复用审计和 VMS 模块类型检查通过，482 项单测通过；该轮主仓类型检查终态通过。
+
+### 2026-10-11 类别编辑写入边界（验证中）
+
+- 只读 MCP 核验 mdm_part_category 的必填/可空字段后，编辑表单改为字段白名单，复用 replaceReactiveModel，创建独立提交对象；新增子类别继承父类别 tenantId，编号规则按编辑行/父类别租户读取。Supabase 新增和更新仅提交类别自身字段，更新不提交 tenantId 或审计字段，添加 count=exact 和零影响结果防护。无线上数据库写入。
+- 聚焦 ESLint、VMS 模块类型检查、UI 审计通过，482 项单测通过。最新主仓类型检查仍在运行。新增类别编辑成功/零条失败浏览器检查未通过，包含 Vue runtime ce 异常及确认未触发/零条关闭的表现；独立端口重新验证正在运行，尚不能认定保存流程或全部租户行为通过。日志 .artifacts/category-edit-*.log，现有异步树两项浏览器检查已通过，但不替代编辑验证。
+
+### 2026-10-11 类别编辑浏览器复核与表单复用
+
+- 上述编辑浏览器失败已定位：首次确认遇到共享 ArtForm 的异步选项保护；模拟跨域响应未 expose content-range，导致浏览器无法读取 count=0。测试等待上级类别空选项渲染（排除自身及子类）后确认，并公开影响行数响应头；未删除加载保护或放宽零影响断言。独立端口热缓存后无先前 Vue runtime 异常。
+- 编辑成功与零条失败两项最终通过，验证 PATCH 白名单不含 children、tenant_id、id 或审计字段；零条时弹窗保持打开、无成功提示。两张最终截图已查看。证据 .artifacts/category-edit-result-browser.log 和 category-edit-result 截图目录。主仓类型检查、VMS 类型检查、聚焦 ESLint、UI 审计通过，482 项单测通过。此证据仍不代表线上持久化和全租户覆盖。
+- 供应厂商、保险公司、零部件与零部件类别四个弹窗删除重复 replaceForm 实现，直接复用主仓 replaceReactiveModel；保留现有对象消费者，不重建本地替换工具。聚焦 ESLint及三项表单工具单测通过；最新模块类型、UI及复用审计终态通过。
+
+- 四个表单复用改造后，类别树搜索取消、失败重试/卸载清理、编辑成功、零条失败四项浏览器终态全部通过；编辑用例增加 pageerror 必须为空的断言。证据 .artifacts/category-all-final-browser.log（4 passed）；源文件 diff 空白检查通过。其余三个弹窗本轮尚未单独打开，不以类别测试替代其完整视觉验收。
+
+### 2026-10-11 VMS 三类表单重开与字段权限复核
+
+- 供应厂商、保险公司、零部件的编辑值回显、关闭后新增清除旧名称/备注，在 1440x900 和 1280x720 通过六项浏览器检查；供应厂商另加两个宽度的受限字段隐藏和重新新增不带入旧数据检查，共八项。测试使用真实组件与模拟空选项，供应厂商 DTO 明确提供既有字段权限配置；未绕过生产字段保护。已查看三张 1280 编辑与三张 1440 新增截图，弹窗无横向溢出，允许自身内容纵向滚动。
+- 零部件编辑编号规则从顶部范围改为记录 tenantId，复用 useDocumentNumberRule 的显式目标能力；两个宽度补测通过，断言规则查询 tenant_id 等于编辑记录租户。此修改不代表平台全部租户下新增根记录的规则默认目标已完成，截图仍显示需选择目标租户，后续需按管理员自身平台租户默认写入约定继续处理。
+- 证据 .artifacts/vms-form-reuse-responsive-browser.log（8 passed）、vms-part-number-scope-browser.log（2 passed）；聚焦 ESLint、VMS 模块类型和 UI 审计通过，前轮主仓类型终态通过。本轮没有线上数据库写入，也没有保存普通用户/伪造范围服务端验证。
+
+### 2026-10-11 VMS 创建租户默认与业务写入边界
+
+- 零部件、零部件类别创建表单直接复用 useTenantScopeFormPolicy.defaultWriteTenantId：平台全部默认认证用户平台租户，指定范围使用选定租户，普通用户使用认证租户；零部件新增提交显式 tenantId，编辑不回写 tenantId；类别子记录继续继承父类别租户。编号规则读取同一目标。
+- 按最新 conventions 的业务写入边界要求，将类别白名单和文本整理从 API provider 移回类别表单，删除 buildPartsCategoryPayload；API 只转换字段命名、执行请求、抽取更新 id 和检查 count。必填名称/编码使用 normalizeNonNullableText，备注保留既有空字符串语义，未将空值猜测规则放入全局传输层。
+- 四种根记录创建范围全部浏览器通过（含普通用户篡改客户端范围）；平台全部给其他租户父类别新增子类别也通过，断言父 tenantId 与 parentId 及编号规则目标，截图已查看。回归搜索取消、错误重试、类别编辑成功/零条失败、三个表单重开均通过（第一轮12项有一项测试初始化失败，修正范围所有者后四项范围补测全部通过，未将失败日志记为成功）。普通伪造用例只证明客户端解析，不代替服务端伪造 header/RLS 用例。
+- MCP 只读核验 app_private.trg_apply_current_tenant_id：普通用户 new.tenant_id 被强制设为认证租户，平台 super 保留非空显式值，否则默认认证租户。mdm_part_category 具有此触发器；另有 set_vehicle_parts_category_level 在插入/parent_id 更新时计算层级。这里只是代码与触发器证据，不代表完整线上权限、引用、真实持久化验证。
+- 聚焦 ESLint、模块/主仓类型、UI 审计通过，482项单测通过。证据 .artifacts/vms-create-scope-final-browser.log（4 passed）、vms-category-child-scope-browser.log（1 passed）、vms-create-scope-browser.log（11 passed + 1 初始失败）、vms-create-scope-unit.log、vms-create-root-types.log。没有线上写入。
+
+### 2026-10-11 VMS 零部件删除入口与前置检查
+
+- 零部件列表单条和批量删除接入 useRecordDeleteGuard/MasterDataDeleteGuard，统一检查后确认、权限复核和失败反馈。行操作复用 BusinessTableRowActions，仅编辑加一个 ArtButtonMore，删除只在更多菜单；批量删除取消额外的表头确认。删除 API 请求精确影响行数并要求实际影响记录，失败由统一流程处理，不吞异常或误报成功。
+- 真实页面加模拟接口的八项浏览器用例通过，覆盖单条/批量无引用、被引用、检查失败和零影响；断言检查发生在确认之前、失败不发送删除、零影响重新检查且无成功提示。补充使用记录名称和 vehiclePartUsageStatus 字典后，两项引用状态最终补测通过，最终截图已查看。第一次状态断言失败源于测试缓存被按需字典加载覆盖，改为模拟实际字典接口响应，保留状态断言。
+- 主仓和 VMS 类型检查通过，聚焦 ESLint/Stylelint、UI/复用审计通过，482 项主仓单测通过。浏览器证据在 .artifacts/parts-delete-verification 和 .artifacts/parts-reference-final；单测日志 .artifacts/parts-delete-unit.log。快照已重新生成并检查。
+- 仍有服务端缺口：此前只读核验 vehicle_part_usage_part_id_fkey 为 SET NULL，通用 get_record_delete_dependency_details 仅扫描 RESTRICT/NO ACTION，因此模拟引用测试不能证明线上此历史引用已完整受保护。使用记录的授权跳转也尚未补齐；不得将此轮记为全局删除或线上引用保护完成。未修改线上数据库。
+- 最终视觉复核另修正共享引用弹窗的状态回退：已有状态字典且无摘要时不再额外显示“待处理”，避免“待处理 · 正常”；批量引用名称仍保留。两项单条/批量引用补测通过，断言正常状态可见且不含待处理，最终单条截图已查看；聚焦 ESLint、Stylelint 和 UI 审计通过。
+
+### 2026-10-11 VMS 类别列表与树删除统一
+
+- 类别列表单条/批量与树节点删除统一接入 MasterDataDeleteGuard/useRecordDeleteGuard，删除只在一个更多菜单内；树新增/编辑按钮补齐对应权限指令，表格行操作复用 BusinessTableRowActions。删除 API 检查精确影响行数、失败不误报成功，删除后刷新树与列表，当前树节点删除后清除选择。
+- 只读 MCP 再次核验 mdm_part_category 的三个入站外键：类别父级 CASCADE，mdm_part 与 vehicle_part_usage 的类别关联 SET NULL。共享删除 hook 增加可选的附加引用读取，与通用 RPC 并行合并，任一失败仍阻止删除；类别功能自身通过现有完整类别树查询和 TreeUtils.traverse 列出选中类别的直接子类别及名称/编码/状态。列表与树复用同一领域检查，避免只信任搜索后的可见节点或重复手写遍历。
+- 类别单条/批量常规引用、失败、零影响八项通过；列表单条、批量、树入口的子类别阻止/附加检查失败/空引用确认九项最终通过。初轮三个子类别用例因背景树与弹窗重复编号导致严格定位失败，定位限定弹窗后重跑通过，未放宽不发送删除的断言。
+- 普通用户仅 Add 权限入口与专注模式按钮/Esc 进退在 1440 和 1280 两个宽度通过，专注仍保留类别树与表格，截图已查看。测试夹具补齐后端按钮列表，未给普通用户 Edit/Delete 权限。四种新增租户范围最终补测通过；共享 hook 的普通零部件删除八项回归通过。独立冷缓存端口曾出现 Vue ce/runtime 异常，暖缓存终态通过，但冷启动根因仍待排查，不能将失败日志视为通过。
+- 聚焦 ESLint/Stylelint、UI、复用、权限审计通过，主仓/VMS 类型检查通过，482 项主仓单测通过。证据目录 .artifacts/category-delete-verification、category-delete-final、category-permission-final、category-narrow-final、category-create-permission-final、category-guard-regression；类型与单测日志 .artifacts/category-delete-types.log、category-delete-module-types.log、category-delete-unit.log。
+- 剩余限制：客户端只能检查当前读取范围可见的子类别；并发新增子类别、SET NULL 历史引用仍需服务端原子保护，授权引用跳转尚未完成。本轮无线上数据库修改，不代表全局删除、线上历史关联保护或全部优化完成。
+
+### 2026-10-11 共享右键菜单图文一致性
+
+- ArtMenuRight 主菜单和子菜单改用 art-icon-label，清除 8px/4px 局部图标 margin，统一 8px gap、14px 文字与 16px 图标。默认宽度从 120px 调整为 150px，避免含子菜单箭头的四字标题截断；显式 menuWidth 保持调用方设置。
+- 真实浏览器验证主菜单、子菜单和禁用项的中心差不超过 0.5px、间距 8px、图文比例及无截断，连续开关、Esc、选择和卸载监听回归通过；最终截图已查看，证据 .artifacts/context-menu-alignment-final。ESLint、Stylelint、全局 UI 审计通过。类型检查 .artifacts/context-menu-alignment-types.log 因默认 Node 堆内存不足退出，不是通过结果；后续使用 package.json typecheck 的 8192MB 参数重跑。
+- 这是共享右键菜单修复，不能证明所有独立导航、页签和业务页面已完成视觉验收。
+
+### 2026-10-11 横向递归菜单图文一致性
+
+- 横向菜单父级与叶节点复用 art-icon-label，移除局部 4px margin 和独立 18px 图标尺寸，统一 8px 间距与 14/16px 图文比例，保留导航、徽标、展开箭头和权限过滤行为。
+- 明暗主题与 border/shadow 两种模式共四项浏览器用例通过，验证递归展开、父级页面进入、隐藏菜单过滤和键盘进入，并测量所有可见图文组合的垂直中心、间距及大小比例。四张最终截图均已查看，证据 .artifacts/horizontal-icon-alignment；ESLint、Stylelint、UI 审计通过。
+- 主仓类型检查按项目 8192MB 参数运行，日志 .artifacts/navigation-alignment-types.log 待终态核验；混合菜单与工作页签独立图文写法仍需继续迁移及验证。
+
+### 2026-10-11 混合导航与工作页签图文一致性
+
+- 混合导航改用共享 art-icon-label 的 8px 间距；工作页签将图标与标题作为独立 compact 组合，6px 间距并同步缩放图文，关闭按钮保持独立操作。移除局部图标 margin，不修改导航和滚动逻辑。
+- 混合导航测量通过；工作页签三个滚动、关闭、触摸、隐藏重建与卸载用例最终通过，图文中心、间距和比例测量通过。截图已查看，证据 .artifacts/navigation-alignment-final 与 .artifacts/worktab-icon-alignment-verified。前者包含一项失败，不能当作全组通过；页签最终终态见后者。
+- 初轮页签测试在 320px 宽夹具中点击被裁切的第二个关闭按钮，修正为先滚动；模拟时钟还需推进关闭后原有 rAF 自动定位，再进行下一次滚动，避免定位任务覆盖测试滚动。没有 force 点击或放宽图文断言。
+- ESLint、Stylelint、UI 审计通过；主仓 8192MB 类型检查已终态通过，日志 .artifacts/navigation-alignment-types.log。全局独立业务图文布局和其他优化仍未全部完成。
+
+### 2026-10-11 模板图标间距审计补齐
+
+- UI 审计新增 ArtSvgIcon 模板 class 内 mr/ml 外边距检查，补足原有只检查 CSS 图标 margin 的遗漏。失败结果页两条提示复用共享图文布局，保持块级分行，危险图标使用主题 danger token。
+- 全局审计检查 673 主仓与 1396 模块 UI 文件通过；聚焦 ESLint 与 diff 检查通过。真实浏览器失败提示分行/中心/8px 间距及资源分类明暗、1440/390px 五项回归通过，证据 .artifacts/icon-alignment-audit-final，结果页截图已查看。初轮夹具缺少 ripple 注册警告已通过注册真实全局指令消除。
+- 检测器覆盖直接模板图标左右 margin，并不能替代对所有 JSX、动态样式和复杂图文结构的逐项视觉检查。
