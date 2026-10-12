@@ -21,7 +21,7 @@
     "check": "pnpm format:check && pnpm docs:build"
   },
   "devDependencies": {
-    "prettier": "3.9.9",
+    "prettier": "3.9.10",
     "vitepress": "1.6.4"
   }
 }
