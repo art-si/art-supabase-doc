@@ -4,21 +4,21 @@
 
 ## Start here
 
-- [产品概览](https://869123771.github.io/art-supabase-doc/guide/overview)
-- [快速开始](https://869123771.github.io/art-supabase-doc/guide/quick-start)
-- [环境配置](https://869123771.github.io/art-supabase-doc/guide/configuration)
+- [产品概览](https://art-si.github.io/art-supabase-doc/guide/overview)
+- [快速开始](https://art-si.github.io/art-supabase-doc/guide/quick-start)
+- [环境配置](https://art-si.github.io/art-supabase-doc/guide/configuration)
 
 ## User manuals
 
-- [平台使用手册](https://869123771.github.io/art-supabase-doc/manual/platform)
-- [组织、用户与权限](https://869123771.github.io/art-supabase-doc/manual/permissions)
-- [审批工作流](https://869123771.github.io/art-supabase-doc/manual/workflow)
-- [AI 能力](https://869123771.github.io/art-supabase-doc/manual/ai)
+- [平台使用手册](https://art-si.github.io/art-supabase-doc/manual/platform)
+- [组织、用户与权限](https://art-si.github.io/art-supabase-doc/manual/permissions)
+- [审批工作流](https://art-si.github.io/art-supabase-doc/manual/workflow)
+- [AI 能力](https://art-si.github.io/art-supabase-doc/manual/ai)
 
 ## Development and operations
 
-- [总体架构](https://869123771.github.io/art-supabase-doc/development/architecture)
-- [Supabase 开发](https://869123771.github.io/art-supabase-doc/development/supabase)
-- [生产部署](https://869123771.github.io/art-supabase-doc/operations/deployment)
-- [安全基线](https://869123771.github.io/art-supabase-doc/operations/security)
-- [故障排查](https://869123771.github.io/art-supabase-doc/operations/troubleshooting)
+- [总体架构](https://art-si.github.io/art-supabase-doc/development/architecture)
+- [Supabase 开发](https://art-si.github.io/art-supabase-doc/development/supabase)
+- [生产部署](https://art-si.github.io/art-supabase-doc/operations/deployment)
+- [安全基线](https://art-si.github.io/art-supabase-doc/operations/security)
+- [故障排查](https://art-si.github.io/art-supabase-doc/operations/troubleshooting)

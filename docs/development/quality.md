@@ -2903,13 +2903,13 @@ TMS 货品物料与 WMS 装配候选已复用主仓 loadAllDocumentPages，500�
 
 重新读取当前源码确认以下流程仍未满足“引用检查先于确认”的要求，不能归入已完成项：
 
-| 当前入口 | 已确认问题 | 后续验收要求 |
-| --- | --- | --- |
-| purchase-master/supplier/index.vue / removeGroup | 直接 confirmDelete 后调用 deleteMasterGroup | 接入共享守卫，供应商及下级分组引用、取消、失败和并发复查 |
+| 当前入口                                                         | 已确认问题                                         | 后续验收要求                                                   |
+| ---------------------------------------------------------------- | -------------------------------------------------- | -------------------------------------------------------------- |
+| purchase-master/supplier/index.vue / removeGroup                 | 直接 confirmDelete 后调用 deleteMasterGroup        | 接入共享守卫，供应商及下级分组引用、取消、失败和并发复查       |
 | components/operational-master/index.vue / removeGroup、removeRow | 分组及主记录直接确认删除，共享页面影响多个业务入口 | 按当前业务动态配置权限和引用导航，覆盖每个使用该页面的业务入口 |
-| process-master/process-route/index.vue / removeGroup | 先 confirmAction，catch 吞掉所有异常 | 共享守卫接管失败反馈、引用检查和并发复查 |
-| engineering/component-type/index.vue / removeGroup、removeType | 确认文字说明引用限制，但没有确认前检查 | 行业分组、组件类型分别校验，展示下级及 BOM 关联记录 |
-| inventory-master/warehouse-definition/index.vue / removeGroup | 仅确认文字提示下级/仓库限制 | 确认前展示阻止引用，失败关闭删除提交并支持重试 |
+| process-master/process-route/index.vue / removeGroup             | 先 confirmAction，catch 吞掉所有异常               | 共享守卫接管失败反馈、引用检查和并发复查                       |
+| engineering/component-type/index.vue / removeGroup、removeType   | 确认文字说明引用限制，但没有确认前检查             | 行业分组、组件类型分别校验，展示下级及 BOM 关联记录            |
+| inventory-master/warehouse-definition/index.vue / removeGroup    | 仅确认文字提示下级/仓库限制                        | 确认前展示阻止引用，失败关闭删除提交并支持重试                 |
 
 - 共同 API operational-master.ts / deleteMasterGroup 目前继承 writeOptions 并自行提示成功；迁移调用方时需同步核对 exact count、零影响及反馈所有权，避免页面和全局重复提示。仓库和组件行业分组使用独立 API，也需单独核对服务端返回契约。
 - 本次为源码证据清单，没有修改上述业务流程或线上数据库；这些项目仍处于待改造状态，不能用其他页面的通过结果替代验证。

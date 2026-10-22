@@ -15,11 +15,11 @@
 
 平台通过 Supabase Auth、PostgreSQL RLS、RPC、Storage 和 Edge Functions 组织服务端边界。普通用户只访问本人租户与授权业务范围；启用的普通用户可以使用只读 AI，并在具有对应业务 `Add` 权限时通过 AI 创建本租户主数据。其他 AI 修改、配置、发布与工作流状态变化需要平台超级授权和审计。
 
-主仓：<https://gitee.com/wangyanghub/art-supabase-pro>
+主仓：<https://gitee.com/art-si/art-supabase-pro>
 
-在线体验：<https://869123771.github.io/art-supabase-pro/>
+在线体验：<https://art-si.github.io/art-supabase-pro/>
 
-官方文档：<https://869123771.github.io/art-supabase-doc/>
+官方文档：<https://art-si.github.io/art-supabase-doc/>
 
 ## OSChina 版
 
@@ -27,7 +27,7 @@
 
 目前 SCM 采购收料与销售发货通知可进入 WMS 的对应入出库流程，MES 工单可衔接 WMS 领料与完工入库。预约、波次拣选和 TMS 承运交接回执仍需继续建设。文档明确区分已接入页面、已贯通流程和后续范围，并说明数据库租户隔离、精确权限与 AI 受控写入的服务端边界。
 
-源码与操作说明分别见[主仓](https://gitee.com/wangyanghub/art-supabase-pro)和[官方文档](https://869123771.github.io/art-supabase-doc/)。
+源码与操作说明分别见[主仓](https://gitee.com/art-si/art-supabase-pro)和[官方文档](https://art-si.github.io/art-supabase-doc/)。
 
 ## GitHub Release / Discussion 版
 
@@ -37,9 +37,9 @@ The platform now documents ten Web business applications: SCM, MDM, MES, WMS, TM
 
 The documentation also records the tenant and permission contract, the direct database change workflow, deployment checks, and the current product screenshots. Feature status is stated separately from future integration work.
 
-Source: <https://github.com/869123771/art-supabase-pro>
+Source: <https://github.com/art-si/art-supabase-pro>
 
-Documentation: <https://869123771.github.io/art-supabase-doc/>
+Documentation: <https://art-si.github.io/art-supabase-doc/>
 
 ## 配图顺序
 

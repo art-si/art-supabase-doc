@@ -16,7 +16,7 @@
 业务应用由 Git 子模块提供，首次克隆必须带上 `--recurse-submodules`：
 
 ```powershell
-git clone --recurse-submodules https://gitee.com/wangyanghub/art-supabase-pro.git
+git clone --recurse-submodules https://gitee.com/art-si/art-supabase-pro.git
 Set-Location art-supabase-pro
 ```
 

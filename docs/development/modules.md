@@ -41,7 +41,7 @@ pnpm build
 远端仓必须至少有一个提交，然后在主仓执行：
 
 ```powershell
-git submodule add -b master https://gitee.com/wangyanghub/example.git modules/example
+git submodule add -b master https://gitee.com/art-si/example.git modules/example
 ```
 
 检查 `.gitmodules`、gitlink 和克隆复现：

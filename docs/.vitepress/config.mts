@@ -11,7 +11,7 @@ export default defineConfig({
   cleanUrls: true,
   lastUpdated: true,
   ignoreDeadLinks: false,
-  sitemap: { hostname: 'https://869123771.github.io/art-supabase-doc/' },
+  sitemap: { hostname: 'https://art-si.github.io/art-supabase-doc/' },
   head: [
     ['link', { rel: 'icon', href: `${publicBase}logo-platform.webp` }],
     ['meta', { name: 'theme-color', content: '#5b5bd6' }],
@@ -115,16 +115,16 @@ export default defineConfig({
     docFooter: { prev: '上一页', next: '下一页' },
     lastUpdated: { text: '最后更新' },
     editLink: {
-      pattern: 'https://gitee.com/wangyanghub/art-supabase-doc/edit/master/docs/:path',
+      pattern: 'https://gitee.com/art-si/art-supabase-doc/edit/master/docs/:path',
       text: '在 Gitee 上编辑此页',
     },
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/869123771/art-supabase-pro' },
+      { icon: 'github', link: 'https://github.com/art-si/art-supabase-pro' },
       {
         icon: {
           svg: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1.8a10.2 10.2 0 1 0 10.2 10.2V9.5H11.4a2.1 2.1 0 0 0-2.1 2.1v2.1h7.4a4.9 4.9 0 1 1-4.7-6.6h10A10.2 10.2 0 0 0 12 1.8Z"/></svg>',
         },
-        link: 'https://gitee.com/wangyanghub/art-supabase-pro',
+        link: 'https://gitee.com/art-si/art-supabase-pro',
       },
     ],
     footer: {

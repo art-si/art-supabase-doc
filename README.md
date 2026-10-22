@@ -4,13 +4,13 @@
   <p>一套文档说明平台底座、十大 Web 业务应用、司机端、Supabase 安全与工程协作。</p>
 
   <p>
-    <a href="https://gitee.com/wangyanghub/art-supabase-doc">Gitee</a>
+    <a href="https://gitee.com/art-si/art-supabase-doc">Gitee</a>
     ·
-    <a href="https://github.com/869123771/art-supabase-doc">GitHub</a>
+    <a href="https://github.com/art-si/art-supabase-doc">GitHub</a>
     ·
-    <a href="https://869123771.github.io/art-supabase-doc/">在线文档</a>
+    <a href="https://art-si.github.io/art-supabase-doc/">在线文档</a>
     ·
-    <a href="https://gitee.com/wangyanghub/art-supabase-pro">主平台</a>
+    <a href="https://gitee.com/art-si/art-supabase-pro">主平台</a>
     ·
     <a href="./README.en.md">English</a>
   </p>
