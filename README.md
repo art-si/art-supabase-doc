@@ -29,7 +29,7 @@
 
 ## 本地开发
 
-环境要求：Node.js `>= 22.0.0`、pnpm `>= 11.9.0`。
+环境要求：Node.js `>= 22.13.0`、pnpm `11.28.2`（版本由 `package.json` 的 `packageManager` 统一指定，GitHub Actions 自动读取）。
 
 ```powershell
 pnpm install
