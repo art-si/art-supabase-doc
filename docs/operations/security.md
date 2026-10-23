@@ -10,6 +10,12 @@
 - 登录回跳只传同源页面地址，不在 URL、日志或菜单中传 access/refresh token。
 - 跨域独立应用需要服务端一次性授权码 SSO。
 
+## 2026-10-23 旧菜单接口失效身份守卫
+
+旧 `get_menus_for_current_user()` 已和有效身份规则对齐：普通账号须处于启用状态、未软删除，角色须启用。原函数在有效的停用账号回滚夹具上仍返回菜单，新实现对停用账号、软删除账号及仅命中停用角色的账号均返回空结构。临时账号/角色及审计字段已回滚并核验恢复，没有停用预置角色。公开 RPC 原 EXECUTE 授权保留，新的批量授权与缓存树渲染实现仅 owner 可执行，全部使用固定空 search_path。
+
+实际 authenticated 数据库角色下的四种请求身份场景及完整菜单字段/父子/顺序断言在正式提交后再次通过；这些 SQL 检查不替代完整 HTTP 登录验收。恢复备份与两阶段回滚演练记录见现有质量文档，未生成版本迁移文件。
+
 ## 密钥
 
 | 密钥                      | 放置位置                | 是否可进浏览器 |
@@ -30,6 +36,16 @@
 - `SECURITY DEFINER` 放私有 schema，固定 `search_path`，撤销 PUBLIC 执行并主动鉴权。
 - 写操作同时校验精确按钮权限和业务状态。
 - 运行 Supabase security/performance advisors。
+
+## 2026-10-23 装卸作业上下文读取修复
+
+已修复 `tms_get_waybill_cargo_operation_context` 平台超管分支忽略具体已选租户的 P1。公开读取函数使用 `app_private.tenant_in_current_read_scope`，平台全部租户仍可跨租户读取，具体选择约束到该租户，普通用户忽略伪造范围头。内部 raw 函数未授予 authenticated 执行权限；保留原业务授权与字段裁剪。
+
+正式执行前，为该函数保存并校验对象范围恢复备份，从磁盘备份执行恢复演练，并在事务内完成四种身份测试后回滚确认原定义恢复。正式修改与提交后的独立请求均通过同样断言。定义 MD5 从 `cff7a993b3906c803cc0ecdf2f533b83` 变为 `45a55ff2215d35b3cd677da804e3ebbf`，owner、ACL、SECURITY DEFINER 与空 search_path 保持一致。本次只变更单个读取函数，没有改动业务行或写入状态规则；对象备份不等同于全项目数据备份。
+
+回归脚本位于主仓 `tests/integration/tms-cargo-context-tenant-scope.sql`，使用实际 authenticated 数据库角色、既有账号和运单验证平台全部/指定租户、普通用户本租户和伪造范围头。SQL 模拟请求声明，不替代真实 HTTP 登录与会话验收。证据保留在现有质量文档、普通集成测试和 Git 忽略的恢复备份中，不生成版本迁移文件或恢复 `supabase/runbooks`。
+
+修改后 security advisors 规则类别未新增；通用 SECURITY DEFINER 提示仍需逐个核对内部授权。匿名可执行的 `get_login_default_language()` 已查阅定义，固定空 search_path 并仅返回平台语言白名单 zh/en，保留登录前读取用途。WMS 调拨明细重复来源批次索引已连同九个完全被唯一索引覆盖的普通索引清理，已完成恢复、约束/RLS/ACL 及角色读取验证；未使用索引统计不能作为直接删除业务索引的依据。
 
 ## Storage 与文件
 
