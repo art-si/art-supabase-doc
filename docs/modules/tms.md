@@ -90,6 +90,16 @@ Web 管理端与司机端共享同一条服务端运单状态机。若两端显�
 
 客户价格与承运商价格应分别维护，并保留适用线路、货物、计价单位和生效时间。历史交易需要快照的价格或名称可以保留快照字段；普通主数据名称不要重复拷贝到业务表。
 
+## 订单、车辆与司机综合查询
+
+三条主线使用订单 `tms_order.id`、车辆 `mdm_vehicle.id` 和司机 `mdm_driver.id` 作为稳定入口。执行关系来自 `tms_waybill_order_allocation` 与 `tms_waybill`；只有运单尚无分配行时才回退到其 `order_id`，未生成执行运单的订单保留一条主派车摘要。这样一张订单可以关联多辆车和多名司机，同时不会把一个合并运单重复列出。`vehicle_archive` 和 `tms_driver` 是兼容视图，新读取应使用 MDM 主表。
+
+跨主线的最小关联投影由 `tms_list_transport_mainline_relations_secure` 提供，按进行中优先、最近活动时间排序和稳定分页，返回订单/运单/车辆/司机 ID、显示名与执行时点。查询只返回同租户关系，依据已认证身份的当前读取范围核验全租户、已选租户和普通用户；三个综合查询入口分别使用 `TmsOrderQuery:View`、`VehicleQuery:View`、`TmsDriverQuery:View`。订单和司机原有安全读取函数也允许新的只读入口；导出仍额外要求对应 `Export` 权限。函数不返回联系方式、证件号或财务金额。
+
+本次数据库读取函数调整前，对象定义、owner、ACL 和 MD5 保存在 Git 忽略的 `.artifacts/transport-mainline-object-backup-20261026.json`，SHA-256 为 `635ECE5E2DA686EC441DCFEBFD6C4A0260555D2A87F1AFC78AB3F1ECBC2416F7`。先在事务中创建和替换并回滚，核对旧定义哈希全部恢复，再正式提交。回归位于 `tests/integration/tms-transport-mainline.sql`，覆盖无运单订单、去重、分页、平台全租户/已选租户、普通用户和伪造跨租户范围。完整项目备份脚本当时因 Docker Desktop 服务未启动而无法运行；这是函数对象范围恢复备份，不是整库数据快照。
+
+`/tms/mainline-screen` 是三条主线的只读运营大屏。`tms_get_mainline_screen_overview_secure()` 以 `TmsMainlineScreen:View` 为独立权限，在数据库中按 `tenant_in_current_read_scope` 汇总全量订单、车辆、司机和执行运单；返回的重点订单列表最多 10 条，不能代替全量指标。逾期优先于待关联，逾期表示未结束订单的计划到达时间已过；待关联表示未结束订单缺少车辆或司机。新菜单与权限按钮分别按已有在途监控和订单查看授权的交集授予 8 个租户内角色，没有新增写权限。对象新增前的零行状态、事务回滚预演（2 个菜单对象、16 条角色授权、1 个函数）及精确清理 SQL 保存在 Git 忽略的 `.artifacts/mainline-screen-object-backup-20261026.json`，SHA-256 为 `1C9DBCCAC337AEF1DEB19BD592B0D1ABB4679E53A341E92B334DC1BB22789F1F`。提交后验证平台全租户 35 单、平台选定租户 27 单、普通用户及其伪造跨租户请求均为本租户 4 单；无权限账号收到 `42501`。完整项目备份脚本受 Docker 服务不可用影响，恢复范围仅覆盖新增对象。
+
 ## 常见问题
 
 | 问题                | 检查                                           |
