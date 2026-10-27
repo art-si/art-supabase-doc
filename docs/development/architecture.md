@@ -318,10 +318,12 @@ grant execute on function public.mdm_process_step_assignment_counts(uuid[]) to a
 
 原有 `vehicle_part_usage` 管理装车零部件的启用、寿命和报废；可移动的篷布、绑带等领用物资另以 `mdm_part` 为配件主数据，使用 `vms_part_stock`、`vms_part_stock_movement`、`vms_part_issue` 和 `vms_part_issue_line` 管理库存、单据和明细。仍使用 `/vms/vehicle-manage/part-manage` 单一菜单，在页面内切换库存台账、领用归还和既有装车档案。定期盘点属于后续阶段，本次没有引入盘点单。
 
-入库、领用和归还仅能通过检查 `VehiclePartsManage` 菜单及 `VmsPartInventory:*`、`VmsPartIssue:*` 按钮的安全 RPC 执行。库存变动和流水写入处于同一数据库事务，领用时按配件加锁并拒绝负库存；归还数量累计不得超过领用数量。丢失、损坏只结清在用数量，不回补库存。每次写入带 UUID 幂等键；流水采用不可直接写入的表权限和递增 `posting_seq`，保障同事务多笔变动也按实际过账顺序展示。领用单号由服务端按租户与日期锁定生成，车辆与司机绑定同一租户，司机默认取车辆主驾驶员且可覆盖。配件与车辆外键为 `RESTRICT`，保留业务引用历史。图片存于私有 `vms-part-private` bucket，单文件上限 8 MiB，限 PNG/JPEG/WebP，路径为 `<tenant_uuid>/<auth.uid()>/<uuid>.<ext>`，读取受租户和领用查看权限限制。
+入库、领用和归还仅能通过检查 `VehiclePartsManage` 菜单及 `VmsPartInventory:*`、`VmsPartIssue:*` 按钮的安全 RPC 执行。库存变动和流水写入处于同一数据库事务，领用时按配件加锁并拒绝负库存；归还数量累计不得超过领用数量。丢失、损坏只结清在用数量，不回补库存。每次写入带 UUID 幂等键，后续提交存储请求指纹，重试时若内容不同则拒绝；领用明细以 `line_no` 保持输入顺序。流水采用不可直接写入的表权限和递增 `posting_seq`，保障同事务多笔变动也按实际过账顺序展示。领用单号由服务端按租户与日期锁定生成，车辆与司机绑定同一租户，司机默认取车辆主驾驶员且可覆盖。配件与车辆外键为 `RESTRICT`，保留业务引用历史。图片存于私有 `vms-part-private` bucket，单文件上限 8 MiB，限 PNG/JPEG/WebP，路径为 `<tenant_uuid>/<auth.uid()>/<uuid>.<ext>`，读取受租户和领用查看权限限制。
 
 目标项目为 `ckbftoopuyophiebamwy`。直接变更前捕获的受影响菜单、授权、QA 配件与新对象基线位于忽略文件 `.artifacts/vms-parts-prechange.json`（SHA-256 `F50DDF2AFECEEDAB8AA04836E8A8DC4CCF54F2F01BCBBA0C932ACC11F4B5E976`）；每组建表、策略、菜单、函数和存储变更先在 `BEGIN`／`ROLLBACK` 事务预检，再执行并立即断言。五个按钮沿用既有查看、新增、编辑授权角色，未新建菜单路径。两条明确标为 QA 的主数据分别为加厚防雨篷布（QA）和棘轮捆绑带（QA），服务端编号 `LP2026-001`、`LP2026-002`；两张领用单 `PJ-20261027-0001`、`PJ-20261027-0002`，前者领用 4 归还 2，后者领用 6 归还 4、丢失 1、损坏 1；当前库存分别 10 张、18 条，共 8 笔库存及处置流水。回滚测试 `tests/integration/vms-part-inventory.sql` 覆盖四种租户范围、无授权拒绝、超领超还、损坏不回库与重复提交。
 
 安全顾问对这六个给已登录用户调用的 `SECURITY DEFINER` RPC 报通用提醒；函数逐一验证菜单/按钮、目标租户和业务引用，且匿名用户无执行权限，属于预期 API 边界。性能顾问初检指出七个新表外键缺少覆盖索引，已补齐；复检相关项只剩新建索引暂无使用次数的提示，样例数据仅两张单据，不能据此删除面向增长后的外键与分页索引。
 
 两条 QA 配件已关联原有的“配件”分类，库存读取额外返回分类 ID/名称。拟添加“篷布”“绑带”子分类的事务预检触发了现有分类自动编号唯一约束，故未调整共享编号规则或绕过编号触发器；分类细化尚待对该规则单独核验。
+
+`mdm_part` 的通用删除引用读取已实测发现新领用明细、库存流水及库存余额三个 `RESTRICT` 引用来源；旧装车记录的真实表名为 `vehicle_part_usage`，通用引用检查可直接接受该表名。为使引用提示能定位父单，新增只读 `vms_get_part_reference_destination_secure(source_table, record_id)`，根据对应查看权限和当前租户范围将领用明细/出库流水解析为父领用单、库存行/入库流水解析为库存物料；跨租户或无权限返回空。回滚测试验证了定位与平台选中其他租户时的隔离。
