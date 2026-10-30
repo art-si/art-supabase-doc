@@ -38,6 +38,31 @@ VMS 围绕“一车一档”维护车辆档案、保险、年检、违章、事�
 
 AI 车辆健康基于当前档案给出风险解释和建议，不替代人工检查或法定检验。数据缺失时，应先补齐里程、维修或证照记录。
 
+## 车务管理
+
+- **自有车任务**：读取 TMS 主运输任务，按车辆档案的 `vehicle_ownership='self_operated'` 判断自有车。国产/进口字段不参与车辆归属判断。列表区分计划发车、实际发车和实际到达；实际事件尚未登记时显示“—”。正向货与返程货共用主任务，登记费用与财务已审核费用分别展示。
+- **油卡与电卡**：分别建档、分别核算余额，支持明细和卡片视图。充值、消费和冲正保留流水轨迹；切换卡号或流水类型后，查询条件、列表和所选卡余额同步更新。运单燃油费用通过受控接口关联油卡消费，重复保存不重复扣款。
+- **车辆配件**：使用库存台账与车辆领用记录，领用、归还、丢失和损坏按实际数量登记，只有实际归还数量回到库存。定期盘点属于后续资产管理范围。
+- **维修保养**：支持常规保养、故障维修和事故维修，经办人、保养维修日期、当前里程、项目清单、发票与附件。总费用由项目清单汇总，提醒可按三个月或一万公里推算；维修厂选项限定供应商的维修厂分组。
+
+维修类型通过 `sys_dictionary.type_id` 关联类型编码 `vehicleMaintenanceType` 加载；字典项自身的 `code` 可以不同。当前启用项已包含 `routine`、`repair`、`accident`，新增表单默认 `repair`（故障维修），`maintenance` 仅保留历史展示。2026-10-30 按实际关联查询及 `authenticated` 角色读取断言通过，无需补项，未修改数据库；核验结果见主仓忽略目录 `.artifacts/vms-maintenance-type-read-check-20261030.json`。
+
+## 2026-10-29 验收记录与边界
+
+油卡、电卡各保留两张测试卡及六条测试流水；配件领用、库存和维修保养均已保留两组业务样例。两辆经过审批的 QA 自有车辆关联 TMS 主单 `YWD2026102800000072`、`YWD2026102800000073`，已在“FMS应收验收租户”的自有车任务列表和“已接单”筛选中核对，实际发车和到达时间仍为空。
+
+自有车查询的租户回归位于 `tests/integration/vms-own-vehicle-task-scope.sql`，覆盖普通用户、本租户与伪造跨租户请求、平台全部与指定租户、非自有车辆排除和两条 QA 主单。修正前的车辆归属误判可由该测试复现，修正后事务验证及部署后验证均通过。配件库存和油卡费用联动分别由 `vms-part-inventory.sql`、`fms-waybill-fuel-card-sync.sql` 覆盖。
+
+本轮已在内部浏览器检查 1280 和 1024 宽度：页面无整体横向溢出，长表格在表格区域内滚动，操作列保持可用。VMS 类型检查、相关 ESLint/Stylelint、UI 审计和生产构建通过，构建产物写入 Git 忽略的 `.artifacts/vms-build-check`。2026-10-30 获明确授权后，已为两笔合成 `TEST ONLY` 油卡流水 `QA-CONSUME-001/002` 各补传并保存一张凭证；列表各显示 1 张，两张明细的图片均完整显示为 720×840。补传窗口显示业务凭证号，1024 视口无页面横向溢出，图片区域可滚动；焦点模式退出按钮及 Esc 均恢复原页面。主仓忽略目录中的视觉证据为 `.artifacts/vms-fuel-voucher-upload-target-qa001-1280.jpg`、`.artifacts/vms-fuel-voucher-two-saved-focus-1280.jpg`、`.artifacts/vms-fuel-voucher-001-detail-1024.jpg`、`.artifacts/vms-fuel-voucher-002-detail-1280.jpg`、`.artifacts/vms-fuel-voucher-001-saved-detail-crop.jpg`。两笔保存前均完成正式 RPC 事务回滚演练；保存后 JSON 对比仅两条流水的 `voucher_paths` 改变，新增审计 2 条、私有对象 2 个，金额、流水余额、两卡完整记录和最新余额流水未变，余额仍为 1615 元与 1185 元。主仓备份 `.artifacts/qa-fuel-card-voucher-20261030-before.json`、`.artifacts/qa-fuel-card-voucher-20261030-before-002.json`、`.artifacts/qa-fuel-card-voucher-20261030-after.json` 的 SHA-256 依次为 `9CCEF925494303A92B4EF2226333D9C85D0851801166E13019A3CA710A792805`、`002B92DD9423D4FAED20692E09B2CA09A644A3E968F9A1F41BFDAB7C9558BAFE`、`9BEA76927003375A4EA62C34ECDD11A4A507252EF2AC7AB8BB0A630BD5410481`。现场图片的新标签页标题为 720×840，但非 HTML 标签页的 DOM 和截图读取超时，独立大图视觉验收尚未完成。真实发车、到达、签收等节点仍需现场数据，未计为完整运输流程验收。
+
+### 2026-10-30 证件作废与关联续证
+
+证件作废保留原记录、原因、操作人和日期，并停止该证提醒；作废证件不能通过填写原因强制派车。只有明确关联且当前有效的新证才能恢复资格，自营司机也遵守已知作废证件门禁。线下办理窗口尚未配置，未填入虚构窗口地址。
+
+QA返程司机甲、乙各保留一张作废驾驶证 `QA-REV-LIC-001/002` 及关联新证 `QA-REV-LIC-001-R1/002-R1`。受控 RPC 流程与回读确认作废期间阻断、有效新证恢复、旧证提醒关闭；新证截止日 2027-01-30，当前属于三个月临期。历史作废证继续保留，但不再增加当前补证风险。内部浏览器按 `QA-REV-LIC` 筛出四行：两张旧证作废、两张新证临期；待补证 0、临期 2，旧证作废原因可从标题查看。证据为主仓忽略目录 `.artifacts/vms-certificate-lifecycle-two-1024.jpg`、`.artifacts/vms-certificate-lifecycle-status-two-1024.jpg`。GUI 作废与续证提交仍未验证，不能用接口成功替代交互验收。
+
+真实 GUI 进一步核对 QA 甲、乙司机档案证件页：各显示一张作废旧证与一张当前临期 `R1`；甲的“管理证件”自动带主体，中心两行、待补证 0、临期 1。旧 `001` 历史证不再提供操作按钮，当前 `R1` 的菜单提供登记续证、标记已处理与作废。登记续证表单的主体和证件类型禁改，证号与日期为空，随后取消未写入。乙首次从档案打开中心曾沿用甲的 `001` 两行且无加载提示，修复前证据为主仓 `.artifacts/vms-certificate-subject-switch-stale-before-1280.jpg`。现已按路由主体重建表格、取消旧请求并清空指标/状态/关键词，同时收紧历史证续证入口及处理器校验；六项策略测试、格式、ESLint、VMS 类型检查、UI 审计和差异检查通过。修复后乙的 `002` 旧证无按钮、`R1` 菜单可用；作废确认中文后果已阅读并用 Esc 取消。完整修复后的甲→乙→甲自动重放及乙筛选重置待重新登录后复验；作废和续证 GUI 提交仍未执行。证据为主仓 `.artifacts/tms-driver-certificate-history-qa001-1280.jpg`、`.artifacts/tms-driver-certificate-history-qa002-1280.jpg`、`.artifacts/vms-certificate-renewal-current-only-qa001-1280.jpg`、`.artifacts/vms-certificate-renewal-current-only-qa002-1280.jpg`、`.artifacts/vms-certificate-renewal-form-qa001-1280.jpg`。OCR 图片与字段权限验收仍待授权。
+
 ## 常见问题
 
 | 问题               | 检查                                     |
