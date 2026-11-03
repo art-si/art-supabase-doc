@@ -327,3 +327,17 @@ grant execute on function public.mdm_process_step_assignment_counts(uuid[]) to a
 两条 QA 配件已关联原有的“配件”分类，库存读取额外返回分类 ID/名称。拟添加“篷布”“绑带”子分类的事务预检触发了现有分类自动编号唯一约束，故未调整共享编号规则或绕过编号触发器；分类细化尚待对该规则单独核验。
 
 `mdm_part` 的通用删除引用读取已实测发现新领用明细、库存流水及库存余额三个 `RESTRICT` 引用来源；旧装车记录的真实表名为 `vehicle_part_usage`，通用引用检查可直接接受该表名。为使引用提示能定位父单，新增只读 `vms_get_part_reference_destination_secure(source_table, record_id)`，根据对应查看权限和当前租户范围将领用明细/出库流水解析为父领用单、库存行/入库流水解析为库存物料；跨租户或无权限返回空。回滚测试验证了定位与平台选中其他租户时的隔离。
+
+### VMS 零部件关联 MDM 物料（2026-11-02）
+
+`mdm_part.material_id` 与 `unit_id` 分别以 `(id, tenant_id)` 复合外键引用 MDM 物料和计量单位；一个租户的同一物料至多生成一条零部件档案。新增必须参选物料和单位，数据库触发器强制以 MDM 名称、编码、品牌、型号及单位名称覆盖客户端文本，旧有四条未关联档案保留编辑。原自动编号仅在无物料的新行运行，实际新建一律采用物料编码。Excel 导入先按当前目标租户精确解析 MDM 编码与单位，未匹配的行明确报错。字段扩容曾在事务预检中被 `app_private.mdm_catalog_projection` 视图依赖阻止；现有 MDM 数据均未超过零部件字段长度，触发器对未来超长来源给出中文错误。
+
+目标项目为 `ckbftoopuyophiebamwy`。变更前表数据、约束、触发器和相关权限快照保存在忽略文件 `.artifacts/mdm-part-before-material-link.json`。上线前执行 `BEGIN`／`ROLLBACK` 预检；只读与回滚写入核验覆盖平台全租户、平台选定、普通本租户和伪造跨租户 header，以及平台全租户指定目标新增/编辑、普通新增伪造文本覆盖、跨租户物料/单位拒绝。`tests/integration/vms-part-material-link.sql` 最终整文件已在线回滚运行通过。VMS scoped `vue-tsc`、独立 VMS 构建通过，打包输出保存在忽略目录 `.artifacts/vms-build-20261102-parts-data`；导入单位映射单测 2/2 通过。
+
+平台“全部租户”新增零部件时，物料、分类和单位选项均按表单目标租户读取；供应商选项使用只返回 ID/租户/名称的 `vms_list_vehicle_supplier_options_for_tenant_secure`，沿用车辆供应商选项权限并拒绝越过认证读取范围。原供应商选项 RPC 保留给不传目标租户的旧调用。变更前供应商 RPC 与零部件复合外键基线在忽略文件 `.artifacts/vms-parts-option-scope-before.json`；`tests/integration/vms-parts-option-scope.sql` 在线回滚验证平台全租户指定目标、平台选定、普通本租户和普通伪造 header，匿名角色无该 RPC 执行权。零部件的类别与供应商复合外键仍在数据库写入时阻止跨租户引用。
+
+### TMS 客户与承运商协议价（2026-11-02）
+
+两类价格保留原表和安全 RPC，增加可空合同 ID、有效期、状态、里程及开单配置 JSON；承运商价另补收发货地址、联系人和坐标。合同 ID 由数据库校验为同行租户及对应客户/承运商，地址也受租户约束。`tmsPriceAgreementStatus` 放在原价格字典目录，值为草稿、待审批、已生效、已失效；主菜单及其详情、编辑页和保存按钮标题同步改为“客户协议价”“承运商协议价”用语，路由和权限名未变。安全读接口回显合同摘要，价目敏感金额及货物行金额仍按字段权限遮罩，直写表权限不向已登录角色开放；新增三个协议价参选/匹配 RPC 仅授予 `authenticated` 执行，匿名角色无权调用。平台全租户和选定租户读取、普通本租户及伪造 header 读取已在线核验；为保留平台管理员向其他租户创建时的真实审计身份，价格表创建人外键由同租户复合关系调整为全局用户 ID 关系。开单只按完整线路、装载类型、车型、计价方式以及协议价自身已生效且业务日期有效来匹配。
+
+变更前价格数据、函数和约束快照保存在忽略文件 `.artifacts/tms-price-before-agreements.json`，菜单和字典调整前的快照另存 `.artifacts/tms-price-menu-dict-before-copy.json`；合同参选 RPC 补强前快照为 `.artifacts/tms-price-contract-rpc-before-status.json`，货物 JSON 键名校验前快照为 `.artifacts/tms-price-cargo-before-validation.json`。`tests/integration/tms-price-agreement.sql` 最终整文件已在线回滚运行通过，覆盖平台全租户默认平台新建、选定租户新建、普通伪造 header 仍写认证租户、平台全租户编辑、合同错配拒绝、货物完整 JSON、待审批不匹配、有效期匹配，以及草稿/已完结/过期合同明细拒绝。`tests/integration/tms-price-cargo-field-access.sql` 在线回滚运行通过，覆盖货物明细仅接受两类 API 已定义的 snake_case 键名、保留承运商旧单号与费用字段，并以普通账号的 hidden/masked/read/edit 四级权限逐项核对客户和承运商全部目标金额字段；普通备注在四级均保留。读取遮罩也防御此前可能写入的驼峰金额键。TMS 单元测试 74/74、主仓 API/租户/物料相关单元测试 69/69 通过。现有三份合同都只绑定客户，承运商合同候选暂无数据；既有两条承运商价的车辆归属已不满足原参考校验，未改写历史关联。合同允许在草稿阶段绑定协议价，候选返回合同状态供识别；批量选合同明细仅允许已批准、未完成且当前有效的合同。协议价本身若手动设为已生效，即使关联合同仍是草稿，也可能被开单匹配；当前未接审批自动流转。
