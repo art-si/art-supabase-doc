@@ -53,7 +53,7 @@ pnpm docs:build
 pnpm docs:preview
 ```
 
-生产文件位于 `docs/.vitepress/dist`。默认公共路径为 `/art-supabase-doc/`；部署到域名根目录时设置 `DOCS_BASE=/` 后重新构建。
+生产文件位于 `docs/.vitepress/dist`。默认公共路径为 `/art-supabase-doc/`。部署到独立域名根目录时，同时设置 `DOCS_BASE=/` 和 `DOCS_SITE_URL=https://docs.example.com/` 后重新构建；后者用于站点地图和 `robots.txt`，必须是含完整公共路径、无查询参数和片段的 HTTP(S) URL。其他公共路径也需让 `DOCS_SITE_URL` 的路径与规范化后的 `DOCS_BASE` 一致（末尾保留 `/`）。
 
 ## GitHub Pages 发布
 

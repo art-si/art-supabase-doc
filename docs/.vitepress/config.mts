@@ -1,6 +1,42 @@
+import { writeFile } from 'node:fs/promises'
+import { join } from 'node:path'
 import { defineConfig } from 'vitepress'
 
-const publicBase = process.env.DOCS_BASE || '/art-supabase-doc/'
+const defaultPublicBase = '/art-supabase-doc/'
+const publicBase = (process.env.DOCS_BASE || defaultPublicBase).replace(/([^/])$/, '$1/')
+const configuredSiteUrl = process.env.DOCS_SITE_URL
+
+if (!publicBase.startsWith('/')) {
+  throw new Error('DOCS_BASE must start with /')
+}
+
+const sitemapHostname = (() => {
+  if (!configuredSiteUrl) {
+    if (publicBase !== defaultPublicBase) {
+      throw new Error('DOCS_SITE_URL is required when DOCS_BASE differs from the default')
+    }
+    return 'https://art-si.github.io/art-supabase-doc/'
+  }
+
+  let siteUrl: URL
+  try {
+    siteUrl = new URL(configuredSiteUrl)
+  } catch {
+    throw new Error('DOCS_SITE_URL must be an absolute http(s) URL')
+  }
+
+  if (
+    !['http:', 'https:'].includes(siteUrl.protocol) ||
+    siteUrl.search ||
+    siteUrl.hash ||
+    siteUrl.pathname !== publicBase
+  ) {
+    throw new Error(
+      'DOCS_SITE_URL must be an http(s) URL without query or hash whose path equals DOCS_BASE',
+    )
+  }
+  return siteUrl.href
+})()
 
 export default defineConfig({
   lang: 'zh-CN',
@@ -11,7 +47,13 @@ export default defineConfig({
   cleanUrls: true,
   lastUpdated: true,
   ignoreDeadLinks: false,
-  sitemap: { hostname: 'https://art-si.github.io/art-supabase-doc/' },
+  sitemap: { hostname: sitemapHostname },
+  buildEnd: async ({ outDir }) => {
+    await writeFile(
+      join(outDir, 'robots.txt'),
+      `User-agent: *\nAllow: /\n\nSitemap: ${new URL('sitemap.xml', sitemapHostname).href}\n`,
+    )
+  },
   head: [
     ['link', { rel: 'icon', href: `${publicBase}logo-platform.webp` }],
     ['meta', { name: 'theme-color', content: '#5b5bd6' }],

@@ -52,8 +52,11 @@ pnpm docs:preview
 
 ```powershell
 $env:DOCS_BASE = "/"
+$env:DOCS_SITE_URL = "https://docs.example.com/"
 pnpm docs:build
 ```
+
+`DOCS_SITE_URL` 是站点地图和 `robots.txt` 使用的完整公开 URL；它的路径必须与 `DOCS_BASE`（末尾 `/`）一致。
 
 Gitee 社区版 Pages 已下线，因此文档仓保留在 Gitee 作为代码源，并推荐由已同步的 GitHub 仓库通过 Actions 发布到 GitHub Pages；也可以选择 Cloudflare Pages、Netlify、Vercel 或 Nginx。仓库已经提供 `.github/workflows/deploy.yml`，在 GitHub 仓库的 **Settings → Pages → Source** 选择 **GitHub Actions** 后，每次推送 `master` 会自动发布。
 

@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://art-si.github.io/art-supabase-doc/sitemap.xml

@@ -36,7 +36,7 @@ pnpm check
 pnpm docs:preview
 ```
 
-`pnpm check` runs formatting checks and the VitePress production build. Build directly with `pnpm docs:build`. Output is written to `docs/.vitepress/dist`; set `DOCS_BASE=/` to build for a domain root instead of the default `/art-supabase-doc/` path.
+`pnpm check` runs formatting checks and the VitePress production build. Build directly with `pnpm docs:build`. Output is written to `docs/.vitepress/dist`; the default public path is `/art-supabase-doc/`. For a dedicated domain root, set both `DOCS_BASE=/` and `DOCS_SITE_URL=https://docs.example.com/` before rebuilding. The latter sets the sitemap and robots.txt URL and must be a full HTTP(S) URL without a query or fragment; its path must match the normalized `DOCS_BASE` (with trailing `/`) for any custom public path.
 
 ## Publishing
 
