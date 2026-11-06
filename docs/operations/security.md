@@ -2,6 +2,12 @@
 
 安全目标是让认证、租户、权限、数据范围、字段范围和外部能力在服务端形成闭环。前端隐藏、菜单和按钮都不能替代数据库或 Edge Function 的授权。
 
+## 文档站响应头
+
+文档仓的 `deploy/nginx.conf.example` 在 HTTP 上下文中使用 `map` 区分缓存策略，并在 HTTPS `server` 层统一声明响应头：HTML 使用 `no-cache`，`/assets/` 保持一年有效期与 `immutable` 缓存。`X-Content-Type-Options`、`Referrer-Policy` 和 `X-Frame-Options` 使用 `always`，覆盖正常页面、静态资源及 404 响应。
+
+后续响应头也集中到同一层维护。[Nginx 的默认继承规则](https://nginx.org/en/docs/http/ngx_http_headers_module.html)是：子层只要声明了自己的 `add_header`，就不再继承上层的这些声明；`always` 控制响应状态范围，不改变继承关系。变更后先执行 `nginx -t`，再分别检查首页、真实的 `/assets/` 构建文件和一个不存在路径的响应头，确认三项安全头与缓存策略同时生效。
+
 ## 身份与会话
 
 - 使用 Supabase Auth 作为身份来源，敏感操作校验有效用户和会话。
