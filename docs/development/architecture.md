@@ -229,6 +229,12 @@ revoke all on function public.mdm_process_step_assignment_counts(uuid[]) from pu
 grant execute on function public.mdm_process_step_assignment_counts(uuid[]) to authenticated;
 ```
 
+## VMS 司机参选与普通租户车辆档案（2026-11-06）
+
+车辆归属为自营时参选 `self` 司机，个人挂靠参选 `individual` 司机；承运商和第三方物流按所选承运商参选司机。主司机和备用司机分别保留原有类型过滤。`vms_list_asset_driver_options_secure` 对没有 `tms_driver_profile` 的历史司机，仅在已有明确且同租户的 `carrier_id` 与所选承运商一致时兼容展示；已有扩展档案的归属仍优先，缺少档案且无承运商的司机不推断为自营或个人司机。权限、启用状态、字段脱敏和资产租户解析保持原契约。
+
+普通用户的安全车辆详情会省略 `tenant_id`；编辑和复制表单的参选及图片上传通过有效租户作用域补足上下文，平台全部租户编辑仍使用原车辆租户。修改前已校验函数定义、所有者及授权快照 `.artifacts/vms-driver-compat-before-20261106.json`，SHA-256 为 `7FEC8CD326B8C861058A0C008469626780513DCC9ABF7EFEA0A43BAE36A4FEA4`。变更在目标项目先事务回滚预演再直接执行；部署后 `tests/integration/vms-asset-driver-options-ownership.sql` 覆盖平台全部、平台指定、普通本租户、伪造跨租户头、跨承运商、停用司机及匿名授权检查并通过，普通用户调用目标承运商主司机选项读回 4 条。未补写或修改司机业务档案。
+
 ## SMIS 事故人员公共选择与租户快照（2026-10-08）
 
 事故快报和事故分析的人员多选直接复用 `ArtEmployeeSelect`，通过已有 `apiFn` 和 `displayFields` 配置事故专用读取以及性别、年龄列。公共组件保留选中源记录的完整字段；事故快报仍固化身份、组织和任职快照，并保留再次选择时已有的伤害信息。专用的 `accident-employee-multiple-select.vue` 已删除。
